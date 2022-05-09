@@ -1,10 +1,8 @@
-console.log("안녕하세요~~");
+console.log("안녕하세요~~~");
 
-function getToken() {
-  const result = String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
-  console.log(result);
-
-  return result;
+function getToken(aaa) {
+  const token = String(Math.floor(Math.random() * 10 ** aaa)).padStart(aaa, "0");
+  console.log(token);
 }
 
-getToken();
+getToken(13);
