@@ -4,9 +4,13 @@
 // 4. 함수는 파사드 패턴이 적용 되어야한다.
 
 //바닐라 node에서 export import 하려면 package.js에 type: module을 추가해야한다.
-import { splitNumber, checkNumber } from "./resident-registration-number.js";
+import { checkNumber } from "./resident-registration-number.js";
 
 function customRegistrationNumber(number) {
+  function splitNumber(number) {
+    const splitNumbers = number.split("-");
+    return splitNumbers;
+  }
   const splitNumbers = splitNumber(number);
   checkNumber(number, splitNumbers);
 }

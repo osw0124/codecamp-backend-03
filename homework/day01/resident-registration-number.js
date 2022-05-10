@@ -1,8 +1,3 @@
-function splitNumber(number) {
-  const splitNumbers = number.split("-");
-  return splitNumbers;
-}
-
 function checkNumber(number, splitNumbers) {
   if (number[6] !== "-") {
     console.log("에러발생!!!형식이 올바르지 않습니다!!!");
@@ -20,4 +15,4 @@ function changeNumber(splitNumbers) {
   console.log(headNumber + "-" + tailNumber + "******");
 }
 
-export { splitNumber, checkNumber, changeNumber };
+export { checkNumber, changeNumber };
