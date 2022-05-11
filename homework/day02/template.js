@@ -23,3 +23,5 @@ function getWelcomeTemplate({ name, email, citizenNumber, phone, favoriteSite })
 }
 
 getWelcomeTemplate(user);
+
+//test
