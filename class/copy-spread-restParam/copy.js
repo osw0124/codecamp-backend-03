@@ -14,6 +14,7 @@ const child3 = {
   school: "다람쥐 초등학교",
 };
 
+//파싱을 이용한 깊은 복사
 const child4 = JSON.parse(JSON.stringify(child3));
 
 child4.name.first = "최";
