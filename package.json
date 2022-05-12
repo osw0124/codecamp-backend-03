@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "name": "codecamp-backend-03",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/osw0124/codecamp-backend-03.git",
+  "author": "woong <osw0124@daum.net>",
+  "license": "MIT"
+}
