@@ -14,7 +14,7 @@ app.use(express.json());
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerJsdoc(options)));
 app.use(
   cors({
-    origin: "127.0.0.1:5500/*",
+    origin: "http://127.0.0.1:5500",
   })
 );
 

@@ -1,6 +1,7 @@
 import express from "express";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import cors from "cors";
 
 import { options } from "./swagger/config.js";
 
@@ -8,6 +9,11 @@ const app = express();
 
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5500",
+  })
+);
 
 app.get("/users", (req, res) => {
   const users = [
@@ -19,28 +25,28 @@ app.get("/users", (req, res) => {
       prefer: "https://naver.com",
     },
     {
-      email: "aaa@gmail.com",
+      email: "bbb@gmail.com",
       name: "흰둥이",
       phone: "010-1234-5678",
       personal: "220110-2222222",
       prefer: "https://naver.com",
     },
     {
-      email: "aaa@gmail.com",
+      email: "ccc@gmail.com",
       name: "짱구",
       phone: "010-1234-5678",
       personal: "220110-2222222",
       prefer: "https://naver.com",
     },
     {
-      email: "aaa@gmail.com",
+      email: "ddd@gmail.com",
       name: "원장선생님",
       phone: "010-1234-5678",
       personal: "220110-2222222",
       prefer: "https://naver.com",
     },
     {
-      email: "aaa@gmail.com",
+      email: "eee@gmail.com",
       name: "신형만",
       phone: "010-1234-5678",
       personal: "220110-2222222",
