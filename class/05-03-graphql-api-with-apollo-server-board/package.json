@@ -1,0 +1,15 @@
+{
+  "name": "05-02-graphql-api-with-apollo-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "apollo-server": "^3.7.0",
+    "graphql": "^16.5.0",
+    "nodemon": "^2.0.16"
+  }
+}
