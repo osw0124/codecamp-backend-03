@@ -8,7 +8,7 @@ export function createTokenOfPhone(myphone) {
     const mytoken = getToken();
 
     // 3. 핸드폰번호에 토큰 전송하기
-    // sendTokenToSMS(myphone, mytoken);
+    sendTokenToSMS(myphone, mytoken);
 
     return mytoken;
   }
