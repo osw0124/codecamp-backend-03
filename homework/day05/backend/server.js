@@ -74,5 +74,5 @@ app.get("/starbucks", (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("서버열렸슴~~~~~~");
+  console.log(`서버가 열렸습니다 -- ${Date()}`);
 });
