@@ -40,10 +40,7 @@ app.post("/tokens/phone", (req, res) => {
   const myphone = req.body.myphone;
   const token = createTokenOfPhone(myphone);
 
-  res.status(200).send({
-    token: token,
-    msg: "토큰을 받아주세요",
-  });
+  res.status(200).send("인증이 완료되었습니다.");
 });
 
 app.listen(port, () => {
