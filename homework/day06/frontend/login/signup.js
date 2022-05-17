@@ -6,10 +6,11 @@ const getValidationNumber = async () => {
   const PhoneNumber03 = document.getElementById("PhoneNumber03").value;
 
   const phoneNumber = PhoneNumber01 + PhoneNumber02 + PhoneNumber03;
+  console.log(phoneNumber);
 
   axios
     .post("http://localhost:3000/tokens/phone", {
-      phoneNumber: phoneNumber,
+      myphone: phoneNumber,
     })
     .then((res) => {
       console.log(res.data);

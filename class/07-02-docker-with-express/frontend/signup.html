@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>signUp</title>
+
+    <link rel="stylesheet" href="sign.css" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+      function zzz() {
+        //1.입력한 휴대폰 번호 가져오기
+        const phoneNumber = document.getElementById("phoneNumberBox").value;
+        console.log(phoneNumber);
+
+        //2. 휴대폰번호로 인증번호 API 요청
+        axios
+          .post("http://localhost:3000/tokens/phone", {
+            myphone: phoneNumber,
+          })
+          .then((res) => {
+            console.log(res);
+            document.getElementById("result").innerText = res.data.token;
+          });
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      휴대폰번호: <input id="phoneNumberBox" type="text" />
+      <button onclick="zzz()">인증하기</button>
+      <div id="result">인증상태</div>
+      <button>회원가입하기</button>
+    </div>
+  </body>
+</html>
