@@ -47,7 +47,6 @@ async function sendTemplateToEmail(emailReceiver, template) {
     subject: "[코드캠프] 가입을 축하합니다!!!",
     html: template,
   });
-  console.log(result);
   // console.log(`${email}로 ${template}를 전송합니다!!!!`);
 }
 

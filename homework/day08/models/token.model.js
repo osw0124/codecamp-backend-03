@@ -6,5 +6,4 @@ const AuthSchema = new mongoose.Schema({
   isAuth: { type: Boolean, default: false },
 });
 
-// module.exports = mongoose.model("Auth", AuthSchema);
 export const Auth = mongoose.model("Auth", AuthSchema);

@@ -4,6 +4,7 @@ function getToday() {
   const mm = createdAt.getMonth() + 1;
   const dd = createdAt.getDate();
   const today = `${yyyy}-${mm}-${dd}`;
+
   return today;
 }
 

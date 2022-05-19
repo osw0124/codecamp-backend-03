@@ -24,7 +24,6 @@ export function getToken() {
   }
   const result = String(Math.floor(Math.random() * 10 ** mycount)).padStart(mycount, "0");
   return result;
-  // console.log(result)
 }
 
 export async function sendTokenToSMS(receiver, token) {
