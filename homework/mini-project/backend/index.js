@@ -10,6 +10,7 @@ import { options } from "./swagger/config.js";
 import { User } from "./models/userSchema.js";
 import { Token } from "./models/tokenSchema.js";
 import { Starbucks } from "./models/starbucksSchema.js";
+import { checkValidationPhone, getToken, sendTokenToSMS } from "./feature/token.js";
 
 const app = express();
 const port = 3000;
@@ -57,14 +58,24 @@ app.post("/user", async (req, res) => {
 //회원 목록 조회
 app.get("/users", async (req, res) => {
   const users = await User.find();
-  console.log(users);
 
-  res.send(users);
+  res.status(200).send(users);
 });
 
 //토큰 인증 요청
-app.post("/tokens/phone", (req, res) => {
-  res.send();
+app.post("/tokens/phone", async (req, res) => {
+  const receiverPhone = req.body.phone;
+  const token = getToken();
+
+  sendTokenToSMS(receiverPhone, token);
+
+  if (!(await Token.findOne({ phone: receiverPhone }))) {
+    await Token.create({ token: token, phone: receiverPhone });
+  } else {
+    await Token.findOneAndUpdate({ phone: receiverPhone }, { token: token });
+  }
+
+  res.status(201).send("핸드폰으로 인증 문자가 전송되었습니다!");
 });
 
 //토큰 인증 완료
