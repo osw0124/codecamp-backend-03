@@ -59,7 +59,7 @@ app.get("/users", async (req, res) => {
   const users = await User.find();
   console.log(users);
 
-  res.send();
+  res.send(users);
 });
 
 //토큰 인증 요청
