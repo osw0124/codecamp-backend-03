@@ -3,7 +3,7 @@ import "dotenv/config";
 
 export function checkValidationPhone(myphone) {
   if (myphone.length !== 10 && myphone.length !== 11) {
-    console.log("에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!");
+    // console.log("에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!");
     return false;
   } else {
     return true;
@@ -43,4 +43,11 @@ export async function sendTokenToSMS(receiver, token) {
     })
     .then((res) => console.log(res))
     .catch((err) => console.error(err));
+}
+
+export function blindPersonamNumber(personalNumber) {
+  const splitNumber = [...personalNumber.split("-")];
+  const result = splitNumber[0] + "-" + splitNumber[1].slice(0, 1).padEnd(7, "*");
+
+  return result;
 }

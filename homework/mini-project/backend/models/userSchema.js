@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
   prefer: String,
   pwd: { type: String, required: true },
   phone: { type: String, required: true },
-  og: Object,
+  og: { type: Object, default: { name: "none" } },
 });
 
 export const User = mongoose.model("User", UserSchema);

@@ -10,49 +10,86 @@ import { options } from "./swagger/config.js";
 import { User } from "./models/userSchema.js";
 import { Token } from "./models/tokenSchema.js";
 import { Starbucks } from "./models/starbucksSchema.js";
-import { checkValidationPhone, getToken, sendTokenToSMS } from "./feature/token.js";
+import { checkValidationPhone, getToken, sendTokenToSMS, blindPersonamNumber } from "./feature/token.js";
+import { checkValidationEmail, getWelcomeTemplate, sendTemplateToEmail } from "./feature/email.js";
 
 const app = express();
 const port = 3000;
-``;
+
 app.use(express.json());
 app.use(cors({ origin: "http://127.0.0.1:5500" }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
 
 async function scrapFaovritepage(prefer) {
   const url = prefer;
-  const result = await axios.get(url);
-  const $ = cheerio.load(result.data);
 
+  const html = await axios.get(url);
+  const $ = cheerio.load(html.data);
+
+  let result = {};
   $("meta").each((_, el) => {
-    if ($(el).attr("preperty")) {
+    if ($(el).attr("property")) {
       const key = $(el).attr("property").split(":")[1];
       const value = $(el).attr("content");
-      console.log(key, value);
+      result[key] = value;
     }
   });
+  return result;
 }
 
 app.post("/user", async (req, res) => {
   const userReceiver = { ...req.body };
+  if (!checkValidationPhone) {
+    res.status(404).send("에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!");
+    return;
+  }
+
   const user = new User({
     name: userReceiver.name,
     email: userReceiver.email,
-    personal: userReceiver.personal,
+    personal: blindPersonamNumber(userReceiver.personal),
     prefer: userReceiver.prefer,
     pwd: userReceiver.pwd,
     phone: userReceiver.phone,
   });
 
-  await user.save();
+  const samePhoneUser = await User.findOne({ phone: user.phone });
 
-  // if (Token.findOne({ phone: user.phone }).isAuth) {
-  //   scrapFaovritepage(prefer);
-  // } else {
-  //   res.status(422).send("에러! 핸드폰 번호가 인증되지 않았습니다");
-  // }
+  if (samePhoneUser !== null) {
+    await User.findOneAndUpdate(
+      { phone: user.phone },
+      {
+        name: userReceiver.name,
+        email: userReceiver.email,
+        personal: blindPersonamNumber(userReceiver.personal),
+        prefer: userReceiver.prefer,
+        pwd: userReceiver.pwd,
+        phone: userReceiver.phone,
+      }
+    );
+  } else {
+    await user.save();
+  }
 
-  res.status(201).send();
+  const samePhoneToken = await Token.findOne({ phone: user.phone });
+  if (samePhoneToken.isAuth) {
+    const ogInfo = await scrapFaovritepage(user.prefer);
+    await User.findOneAndUpdate({ phone: user.phone }, { og: ogInfo });
+  } else {
+    res.status(422).send("에러! 핸드폰 번호가 인증되지 않았습니다");
+    return;
+  }
+
+  if (!checkValidationEmail(user.email)) {
+    res.status(404).send("에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!");
+    return;
+  }
+
+  const mailTemplate = getWelcomeTemplate(user.name, user.email);
+  sendTemplateToEmail(user.email, mailTemplate);
+
+  const createdUser = await User.findOne({ phone: user.phone });
+  res.status(201).send(createdUser._id);
 });
 
 //회원 목록 조회
