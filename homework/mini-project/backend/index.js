@@ -79,13 +79,30 @@ app.post("/tokens/phone", async (req, res) => {
 });
 
 //토큰 인증 완료
-app.patch("/tokens/phone", (req, res) => {
-  res.send();
+app.patch("/tokens/phone", async (req, res) => {
+  const receiverPhone = req.body.phone;
+  const token = req.body.token;
+
+  const currentDBToken = await Token.findOne({ phone: receiverPhone });
+  if (currentDBToken === null) {
+    res.status(404).send(false);
+    return;
+  }
+  if (currentDBToken.token !== token) {
+    res.status(404).send(false);
+    return;
+  }
+  if (currentDBToken.isAuth === false) {
+    await Token.updateOne({ phone: receiverPhone }, { isAuth: true });
+    res.status(201).send(true);
+    return;
+  }
 });
 
 //스타벅스 커비 목록 조회
-app.get("/starbucks", (req, res) => {
-  res.send;
+app.get("/starbucks", async (req, res) => {
+  const coffeeList = await Starbucks.find();
+  res.status(200).send(coffeeList);
 });
 
 // mongoose.connect("mongodb://my-database:27017/miniProject");
