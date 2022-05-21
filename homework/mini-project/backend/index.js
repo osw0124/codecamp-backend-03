@@ -3,15 +3,14 @@ import cors from "cors";
 import mongoose from "mongoose";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import * as cheerio from "cheerio";
-import axios from "axios";
 
 import { options } from "./swagger/config.js";
 import { User } from "./models/userSchema.js";
 import { Token } from "./models/tokenSchema.js";
-import { Starbucks } from "./models/starbucksSchema.js";
+import { Menu } from "./models/MenuShema.js";
 import { checkValidationPhone, getToken, sendTokenToSMS, blindPersonamNumber } from "./feature/token.js";
 import { checkValidationEmail, getWelcomeTemplate, sendTemplateToEmail } from "./feature/email.js";
+import { scrapFaovritepage } from "./feature/scraping.js";
 
 const app = express();
 const port = 3000;
@@ -20,25 +19,10 @@ app.use(express.json());
 app.use(cors({ origin: "http://127.0.0.1:5500" }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
 
-async function scrapFaovritepage(prefer) {
-  const url = prefer;
-
-  const html = await axios.get(url);
-  const $ = cheerio.load(html.data);
-
-  let result = {};
-  $("meta").each((_, el) => {
-    if ($(el).attr("property")) {
-      const key = $(el).attr("property").split(":")[1];
-      const value = $(el).attr("content");
-      result[key] = value;
-    }
-  });
-  return result;
-}
-
+//회원 가입
 app.post("/user", async (req, res) => {
-  const userReceiver = { ...req.body };
+  const userReceiver = { ...req.body.userInfo };
+  console.log(userReceiver);
   if (!checkValidationPhone) {
     res.status(404).send("에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!");
     return;
@@ -136,14 +120,14 @@ app.patch("/tokens/phone", async (req, res) => {
   }
 });
 
-//스타벅스 커비 목록 조회
+//스타벅스 커피 목록 조회
 app.get("/starbucks", async (req, res) => {
-  const coffeeList = await Starbucks.find();
+  const coffeeList = await Menu.find();
   res.status(200).send(coffeeList);
 });
 
-// mongoose.connect("mongodb://my-database:27017/miniProject");
-mongoose.connect("mongodb://localhost:27017/miniProject");
+mongoose.connect("mongodb://my-database:27017/miniProject");
+// mongoose.connect("mongodb://localhost:27017/miniProject");
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });

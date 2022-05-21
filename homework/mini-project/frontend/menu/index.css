@@ -17,7 +17,7 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: url('../img/menu-back-ground.jpg');
+  background-image: url("../img/menu-back-ground.jpg");
   background-color: rgba(0, 0, 0, 0.2);
   background-blend-mode: multiply;
 }
@@ -62,11 +62,12 @@
   background-color: gray;
 }
 .Menu_Card_Name {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
+  text-align: center;
 }
 .Menu_Card_Info {
-  font-size: 18px;
+  font-size: 13px;
 }
 #Open_Menu_Btn {
   background-color: #036635;

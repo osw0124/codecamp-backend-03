@@ -1,0 +1,15 @@
+{
+  "name": "webcrawler",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "mongoose": "^6.3.4",
+    "nodemon": "^2.0.16",
+    "puppeteer": "^14.1.1"
+  }
+}
