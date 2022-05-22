@@ -5,7 +5,19 @@
  *          summart: 커피메뉴 리스트 가져오기
  *          tags: [Starbucks]
  *          parameters:
- *                  - in: query
+ *                - in: body
+ *                  name: userInfo
+ *                  shema:
+ *                      type: object
+ *                      properties:
+ *                          name:
+ *                              type: string
+ *                          preper:
+ *                              type: string
+ *                          email:
+ *                              type: string
+ *                          phone:
+ *                              type: string
  *          responses:
  *              200:
  *                  description: 성공
