@@ -6,5 +6,5 @@ export const options = {
       version: "1.0.0",
     },
   },
-  apis: ["./swagger/*swagger.js"],
+  apis: ["./swagger/*swagger.yaml"],
 };
