@@ -22,11 +22,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
 //회원 가입
 app.post("/user", async (req, res) => {
   const userReceiver = { ...req.body.userInfo };
-  console.log(userReceiver);
-  if (!checkValidationPhone) {
-    res.status(404).send("에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!");
-    return;
-  }
 
   const user = new User({
     name: userReceiver.name,
@@ -65,7 +60,7 @@ app.post("/user", async (req, res) => {
   }
 
   if (!checkValidationEmail(user.email)) {
-    res.status(404).send("에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!");
+    res.status(404).send("에러 발생!!! 이메일을 제대로 입력해 주세요!!!");
     return;
   }
 
@@ -88,13 +83,18 @@ app.post("/tokens/phone", async (req, res) => {
   const receiverPhone = req.body.phone;
   const token = getToken();
 
-  sendTokenToSMS(receiverPhone, token);
+  if (!checkValidationPhone(receiverPhone)) {
+    res.status(404).send("에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!");
+    return;
+  }
 
   if (!(await Token.findOne({ phone: receiverPhone }))) {
     await Token.create({ token: token, phone: receiverPhone });
   } else {
     await Token.findOneAndUpdate({ phone: receiverPhone }, { token: token });
   }
+
+  sendTokenToSMS(receiverPhone, token);
 
   res.status(201).send("핸드폰으로 인증 문자가 전송되었습니다!");
 });

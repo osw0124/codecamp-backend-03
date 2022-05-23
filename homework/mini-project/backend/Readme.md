@@ -1,5 +1,7 @@
 # 미니프로젝트(연습용)
 
+## 에러
+
 - 웹 크롤러 axios에러
   - 정확한 형태의 url로 접속 요청해야 해결 ex)http://www.naver.com
 - docker compose up 할 때 다른 서버가 빌드, 실행 되는 문제
