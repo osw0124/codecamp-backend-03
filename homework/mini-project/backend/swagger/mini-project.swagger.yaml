@@ -35,11 +35,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: 628ad38555cefa900ea22d5d
+                type: string
+                example: 628ad38555cefa900ea22d5d
         "422": # status code
           description: 핸드폰 번호에 해당하는 토큰 인증 필요
           content:

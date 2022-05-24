@@ -52,22 +52,29 @@ app.post("/user", async (req, res) => {
   }
 
   const samePhoneToken = await Token.findOne({ phone: user.phone });
-  if (samePhoneToken.isAuth) {
+  if (samePhoneToken.isAuth && samePhoneToken.isAuth !== null) {
     const ogInfo = await scrapFaovritepage(user.prefer);
+    console.log("01");
     await User.findOneAndUpdate({ phone: user.phone }, { og: ogInfo });
+    console.log("01 pass");
   } else {
+    console.log("02");
     res.status(422).send("에러! 핸드폰 번호가 인증되지 않았습니다");
+    console.log("02 pass");
     return;
   }
 
   if (!checkValidationEmail(user.email)) {
+    console.log("03");
     res.status(404).send("에러 발생!!! 이메일을 제대로 입력해 주세요!!!");
+    console.log("03 pass");
     return;
   }
 
   const mailTemplate = getWelcomeTemplate(user.name, user.email);
   sendTemplateToEmail(user.email, mailTemplate);
 
+  console.log("04");
   const createdUser = await User.findOne({ phone: user.phone });
   res.status(201).send(createdUser._id);
 });
