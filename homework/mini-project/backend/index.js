@@ -52,7 +52,7 @@ app.post("/user", async (req, res) => {
   }
 
   const samePhoneToken = await Token.findOne({ phone: user.phone });
-  if (samePhoneToken.isAuth && samePhoneToken.isAuth !== null) {
+  if (samePhoneToken !== null && samePhoneToken.isAuth) {
     const ogInfo = await scrapFaovritepage(user.prefer);
     console.log("01");
     await User.findOneAndUpdate({ phone: user.phone }, { og: ogInfo });
