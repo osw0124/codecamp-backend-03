@@ -9,8 +9,8 @@ export class TokenService {
   createToken = async ({ token, phone }) => {
     await Token.create({ token: token, phone: phone });
   };
-  updateToken = async ({ target, condition }) => {
-    await Token.findOneAndUpdate({ ...target }, { ...condition });
+  updateToken = async ({ condition, tokenInfo }) => {
+    await Token.findOneAndUpdate({ ...condition }, { ...tokenInfo });
   };
   sendTokenToSMS = async (receiver, token) => {
     const SMS_KEY = process.env.SMS_KEY;

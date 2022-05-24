@@ -6,6 +6,7 @@ import { Token } from "../models/tokenSchema.js";
 import { EmailService } from "../../services/email.service.js";
 import { UtilService } from "../../services/utils.service.js";
 import { TokenService } from "../../services/token.service.js";
+import { UserService } from "../../services/user.service.js";
 import { scrapFaovritepage } from "../../services/scraping.service.js";
 
 export class UserController {
@@ -15,6 +16,7 @@ export class UserController {
     const userReceiver = { ...req.body }; //postman
     const utilService = new UtilService();
     const emailService = new EmailService();
+    const userService = new UserService();
 
     const user = new User({
       name: userReceiver.name,
@@ -28,7 +30,7 @@ export class UserController {
     samePhoneUser = tokenService.samePhoneUser({ phone: user.phone });
 
     if (samePhoneUser !== null) {
-      await User.findOneAndUpdate(
+      userService.updateUser(
         { phone: user.phone },
         {
           name: userReceiver.name,
@@ -40,7 +42,7 @@ export class UserController {
         }
       );
     } else {
-      await user.save();
+      userService.userSave(user);
     }
 
     const samePhoneToken = await Token.findOne({ phone: user.phone });

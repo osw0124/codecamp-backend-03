@@ -21,7 +21,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
 
 //회원 가입
 app.post("/user", async (req, res) => {
-  const userReceiver = { ...req.body.userInfo };
+  // const userReceiver = { ...req.body.userInfo };
+  const userReceiver = { ...req.body };
 
   const user = new User({
     name: userReceiver.name,

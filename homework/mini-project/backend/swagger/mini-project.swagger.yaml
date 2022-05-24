@@ -1,16 +1,9 @@
-openapi: 3.0.0
-info:
-  title: Sample API
-  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
-  version: 0.1.9
-servers:
-  - url: http://localhost:3000
-    description: backEnd Server
 paths:
-  /users:
+  /user:
     post:
-      summary: Returns a list of users.
-      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - User
+      summary: 회원 가입
       requestBody:
         required: true
         content:
@@ -23,22 +16,169 @@ paths:
                   example: 오세웅
                 email:
                   type: string
-                  example:
+                  example: test@test.com
                 personal:
                   type: string
+                  example: 999999-9999999
                 prefer:
                   type: string
+                  example: http://www.naver.com
                 pwd:
                   type: string
+                  example: ljkljlkjklasdf
                 phone:
                   type: string
+                  example: 01092800167
       responses:
         "201": # status code
-          description: signUp complete
+          description: 회원 가입 완료
           content:
             application/json:
               schema:
-                type: array
-                items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 628ad38555cefa900ea22d5d
+        "422": # status code
+          description: 핸드폰 번호에 해당하는 토큰 인증 필요
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "에러! 핸드폰 번호가 인증되지 않았습니다."
+        "404": # status code
+          description: 올바른 형태의 이메일이 아님
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "에러 발생!!! 이메일을 제대로 입력해 주세요!!!"
+  /users:
+    get:
+      tags:
+        - /users:
+      summary: 회원 정보 조회
+      responses:
+        "200":
+          description: 회원 정보 조회 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: 628ad38555cefa900ea22d5d
+                  name:
+                    type: string
+                    example: 오세웅
+                  email:
+                    type: string
+                    example: test@test.com
+                  personal:
+                    type: string
+                    example: 999999-9999999
+                  pwd:
+                    type: string
+                    example: lsdjlafsdjladj
+                  phone:
+                    type: string
+                    example: 01012341234
+                  og:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: 네이버
+                      url:
+                        type: string
+                        example: http://localhost.com
+                      img:
+                        type: string
+                        example: "https://s.pstatic.net/static/www/mobile/edit/2016/0705/mobile_212852414260.png"
+                      description:
+                        type: string
+                        example: 안녕하세요 사이트에 방문해주셔서 감사합니다
+
+  /tokens/phone:
+    post:
+      tags:
+        - Token
+      summary: 토큰 인증 요청
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
                   type: string
-                  example: 628ad38555cefa900ea22d5d
+                  example: 01012341234
+      responses:
+        "201":
+          description: 인증 문자 전송
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 핸드폰으로 인증 문자가 전송되었습니다.
+        "404":
+          description: 핸드폰 번호의 양식이 바르지 않습니다
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 에러 발생!!! 핸드폰 번호를 제대로 입력해 주세요!!!
+    patch:
+      tags:
+        - Token
+      summary: 토큰 인증 실행
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  example: 01012341234
+                token:
+                  type: string
+                  example: 678674
+      responses:
+        "201":
+          description: 인증 완료
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: true
+        "404":
+          description: 토큰 값이 일치하지 않을 때
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: false
+  /starbucks:
+    get:
+      tags:
+        - Starbucks
+      summary: 스타벅스 커피 메뉴 조회
+      responses:
+        "200":
+          description: 조회 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 아메리카노
+                  img:
+                    type: string
+                    example: "https://s.pstatic.net/static/www/mobile/edit/2016/0705/mobile_212852414260.png"
