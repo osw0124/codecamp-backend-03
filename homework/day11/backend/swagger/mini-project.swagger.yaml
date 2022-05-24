@@ -1,0 +1,44 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
+  version: 0.1.9
+servers:
+  - url: http://localhost:3000
+    description: backEnd Server
+paths:
+  /users:
+    post:
+      summary: Returns a list of users.
+      description: Optional extended description in CommonMark or HTML.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 오세웅
+                email:
+                  type: string
+                  example:
+                personal:
+                  type: string
+                prefer:
+                  type: string
+                pwd:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        "201": # status code
+          description: signUp complete
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: 628ad38555cefa900ea22d5d
