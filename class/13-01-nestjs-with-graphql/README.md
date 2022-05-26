@@ -17,6 +17,7 @@
   - prettier 설정
     - 최상위 루트에 .vscode/settings.json 디렉토리 참고
     - vscode의 기본설정을 파일로 만들고 공유할 수 있다.
+- ORM 사용(typeorm)
 
 ---
 
@@ -24,10 +25,15 @@
 2. graphql 등 설치 //GraphQL Installation 참고
 3. sample 코드에 따라 graphQL 구조 만들기
 4. typeORM 설치
+5. typeORM 설치 // install Docs참고
+6. app.module 설정 // Docs 참고, 싱크로나이즈 주의!!
+7. 테이블 생성, 연결(export, import)
+8. DBeaver 연결 DB 생성, 테이블 확인
 
 ---
 
 ### **참고**
 
+- https://docs.nestjs.com/techniques/database
 - https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first
 - https://docs.nestjs.com/graphql/quick-start
