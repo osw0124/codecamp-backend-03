@@ -1,0 +1,53 @@
+show databases;
+
+use myproject03;
+
+show tables;
+
+desc product;
+
+SELECT * 
+  FROM product
+;
+
+INSERT into product(id, name, description, price, isSoldout)
+             values(uuid(), "마우스", "추천 아이템!!", 15000, false)
+;
+
+INSERT into product(id, name, description, price, isSoldout)
+             values(uuid(), "노트북", "가성비 레노버!!", 10000, false)
+;
+
+SELECT  * FROM product_saleslocation
+;
+
+INSERT  into product_saleslocation(id, address, addressDetail, lat, lng, meetingTime)
+                            values(uuid(), "구로구", "디지털로 300", "123.0", "456.1", "2022-12-31")                           
+;
+
+UPDATE  product 
+   set name = "키보드" 
+ WHERE name = "마우스" or name = "마우스"
+;
+
+UPDATE  product  SET productSalesloactionId = "b5c337a4-dff5-11ec-9278-94b86dfd1ba5" WHERE name = "키보드"
+;
+
+SELECT product.id, name, price, address, addressDetail as "상세주소" 
+  FROM product, product_saleslocation 
+ WHERE product.productSalesloactionId = product_saleslocation.id 
+; 
+
+//그룹핑하고 합계산
+SELECT name, SUM(price) FROM product GROUP BY name
+;
+
+//그룹핑하고 최대값계산
+SELECT name, MAX(price) FROM product GROUP BY name
+;
+
+//이름 내림차순 정렬
+SELECT name, FROM product ORDER BY name DESC
+;
+
+
