@@ -1,4 +1,5 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { Min } from 'class-validator';
 import { Brand } from 'src/apis/brands/entities/brand.entity';
 import { Color } from 'src/apis/colors/entities/color.entity';
 import { Model } from 'src/apis/models/entities/model.entity';
@@ -36,12 +37,16 @@ export class Product {
   size: string;
 
   @Column({ default: false })
-  @Field(() => Boolean)
+  @Field(() => Boolean, { defaultValue: false })
   isDeliver: boolean;
 
   @Column({ default: 0 })
-  @Field(() => Int)
+  @Field(() => Int, { defaultValue: 0 })
   star: number;
+
+  @Column({ default: 0 })
+  @Field(() => Int, { defaultValue: 0 })
+  amount: number;
 
   @ManyToOne(() => SubCategory)
   @Field(() => SubCategory)

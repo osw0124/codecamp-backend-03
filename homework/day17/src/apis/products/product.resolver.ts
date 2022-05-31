@@ -26,10 +26,11 @@ export class ProductResolver {
   }
 
   @Mutation(() => Product)
-  updateProduct(
+  async updateProduct(
     @Args('productId') productId: string, //
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
   ) {
+    await this.productservice.checkSoldout({ productId });
     return this.productservice.update({ productId, updateProductInput });
   }
 }

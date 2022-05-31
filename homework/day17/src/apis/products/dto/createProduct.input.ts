@@ -9,6 +9,7 @@ export class CreateProductInput {
   @Field(() => String)
   imgUrl: string;
 
+  @Min(0)
   @Field(() => Int)
   price: number;
 
@@ -20,5 +21,9 @@ export class CreateProductInput {
 
   @Field(() => Int)
   @Min(0)
-  start: number;
+  star: number;
+
+  @Min(0)
+  @Field(() => Int)
+  amount: number;
 }

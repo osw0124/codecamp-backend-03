@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -28,5 +28,15 @@ export class ProductService {
       ...updateProductInput,
     };
     return await this.productRepository.save(newProduct);
+  }
+
+  async checkSoldout({ productId }) {
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+
+    if (product.amount === 0) {
+      throw new UnprocessableEntityException('매진된 상품입니다.');
+    }
   }
 }
