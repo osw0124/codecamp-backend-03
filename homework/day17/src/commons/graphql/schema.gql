@@ -1,0 +1,72 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Brand {
+  id: String!
+  name: String!
+}
+
+type Color {
+  id: String!
+  name: String!
+  products: Product!
+}
+
+type Model {
+  id: String!
+  name: String!
+}
+
+type MainCategory {
+  id: String!
+  name: String!
+}
+
+type SubCategory {
+  id: String!
+  name: String!
+  mainCategory: MainCategory!
+}
+
+type Product {
+  id: String!
+  desc: String!
+  imgUrl: String!
+  price: Int!
+  size: String!
+  isDeliver: Boolean!
+  star: Float!
+  subCategory: SubCategory!
+  brand: Brand!
+  model: Model!
+  colors: Color!
+}
+
+type Query {
+  fetchProduct(productId: String!): Product!
+  fetchProducts: [Product!]!
+}
+
+type Mutation {
+  createProduct(createProductInput: CreateProductInput!): Product!
+  updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
+}
+
+input CreateProductInput {
+  desc: String!
+  imgUrl: String!
+  price: Int!
+  size: String!
+  isDeliver: Boolean!
+  start: Int!
+}
+
+input UpdateProductInput {
+  desc: String
+  imgUrl: String
+  price: Int
+  size: String
+  isDeliver: Boolean
+  start: Int
+}
