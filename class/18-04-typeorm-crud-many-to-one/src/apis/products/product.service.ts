@@ -26,8 +26,7 @@ export class ProductService {
     const { productSaleslocation, productCategoryId, ...product } = createProductInput;
 
     const result = await this.productSaleslocationRepository.save({ ...productSaleslocation });
-    console.log(result);
-    console.log('===========================');
+
     const result2 = await this.productRepository.save({
       ...product,
       productSaleslocation: result, // result 통째로 넣기, id만 넣기: 차이는 리턴 데이터
