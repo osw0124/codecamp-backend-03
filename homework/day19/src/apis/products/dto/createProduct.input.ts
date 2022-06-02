@@ -1,6 +1,8 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { Min } from 'class-validator';
-import { OrderInput } from 'src/apis/orders/entities/dto/order.input';
+import { BrandInput } from 'src/apis/brands/dto/brand.input';
+import { ModelInput } from 'src/apis/models/dto/model.input';
+import { SubCategoryInput } from 'src/apis/subCategories/dto/subCategory.input';
 
 @InputType()
 export class CreateProductInput {

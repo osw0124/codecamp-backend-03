@@ -7,12 +7,6 @@ type Brand {
   name: String!
 }
 
-type Color {
-  id: String!
-  name: String!
-  products: [Product!]!
-}
-
 type Model {
   id: String!
   name: String!
@@ -27,6 +21,12 @@ type SubCategory {
   id: String!
   name: String!
   mainCategory: MainCategory!
+}
+
+type Color {
+  id: String!
+  name: String!
+  products: [Product!]!
 }
 
 type Product {

@@ -1,6 +1,10 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Brand } from '../brands/entities/brand.entity';
+import { MainCategory } from '../mainCategories/entities/mainCategory.entity';
+import { Model } from '../models/entities/model.entity';
+import { SubCategory } from '../subCategories/entities/subCategory.entity';
 import { Product } from './entities/product.entity';
 
 @Injectable()
@@ -8,6 +12,12 @@ export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(SubCategory)
+    private readonly subCategoryRepository: Repository<SubCategory>,
+    @InjectRepository(Brand)
+    private readonly brandCategoryRepository: Repository<Brand>,
+    @InjectRepository(Model)
+    private readonly modelRepository: Repository<Model>,
   ) {}
 
   async findOne({ productId }) {
@@ -25,11 +35,37 @@ export class ProductService {
 
   async create({ createProductInput }) {
     const { subCategoryId, brandId, modelId, ...product } = createProductInput;
+
+    const subCategory = await this.subCategoryRepository.findOne(
+      {
+        id: subCategoryId,
+      },
+      { relations: ['mainCategory'] },
+    );
+
+    const brand = await this.brandCategoryRepository.findOne({
+      id: brandId,
+    });
+    const model = await this.modelRepository.findOne({ id: modelId });
+
     const result = await this.productRepository.save({
       ...product,
-      subCategory: { id: subCategoryId },
-      brand: { id: brandId },
-      model: { id: modelId },
+      subCategory: {
+        id: subCategoryId,
+        name: subCategory.name,
+        mainCategory: {
+          id: subCategory.mainCategory.id,
+          name: subCategory.mainCategory.name,
+        },
+      },
+      brand: {
+        id: brandId,
+        name: brand.name,
+      },
+      model: {
+        id: modelId,
+        name: model.name,
+      },
     });
 
     console.log(result);
