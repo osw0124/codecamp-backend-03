@@ -2,17 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type MainCategory {
+  id: String!
+  name: String!
+}
+
 type Brand {
   id: String!
   name: String!
 }
 
 type Model {
-  id: String!
-  name: String!
-}
-
-type MainCategory {
   id: String!
   name: String!
 }
@@ -68,6 +68,10 @@ scalar DateTime
 type Query {
   fetchProduct(productId: String!): Product!
   fetchProducts: [Product!]!
+  fetchSubCategory(subCategoryId: String!): SubCategory!
+  fetchSubCategorys: [SubCategory!]!
+  fetchMainCategory(mainCategoryId: String!): MainCategory!
+  fetchMainCategorys: [MainCategory!]!
 }
 
 type Mutation {
@@ -75,6 +79,14 @@ type Mutation {
   updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
   deleteProduct(productId: String!): Boolean!
   restoreProduct(productId: String!): Boolean!
+  createSubCategory(createSubCategoryInput: CreateSubCategoryInput!): SubCategory!
+  updateSubCategory(subCategoryId: String!, createSubCategoryInput: UpdateSubCategoryInput!): SubCategory!
+  deleteSubCategory(subCategoryId: String!): Boolean!
+  restoreSubCategory(subCategoryId: String!): Boolean!
+  createMainCategory(createMainCategoryInput: CreateMainCategoryInput!): MainCategory!
+  updateMainCategory(mainCategoryId: String!, updateMainCategoryInput: UpdateMainCategoryInput!): MainCategory!
+  deleteMainCategory(mainCategoryId: String!): Boolean!
+  restoreMainCategory(mainCategoryId: String!): Boolean!
 }
 
 input CreateProductInput {
@@ -101,4 +113,22 @@ input UpdateProductInput {
   subCategoryId: String
   brandId: String
   modelId: String
+}
+
+input CreateSubCategoryInput {
+  name: String!
+  mainCategoryId: String!
+}
+
+input UpdateSubCategoryInput {
+  name: String!
+  mainCategoryId: String
+}
+
+input CreateMainCategoryInput {
+  name: String!
+}
+
+input UpdateMainCategoryInput {
+  name: String!
 }
