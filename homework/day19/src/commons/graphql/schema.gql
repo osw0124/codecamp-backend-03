@@ -7,12 +7,12 @@ type MainCategory {
   name: String!
 }
 
-type Brand {
+type Model {
   id: String!
   name: String!
 }
 
-type Model {
+type Brand {
   id: String!
   name: String!
 }
@@ -72,6 +72,8 @@ type Query {
   fetchSubCategorys: [SubCategory!]!
   fetchMainCategory(mainCategoryId: String!): MainCategory!
   fetchMainCategorys: [MainCategory!]!
+  fetchModel(modelId: String!): Model!
+  fetchModels: [Model!]!
 }
 
 type Mutation {
@@ -87,6 +89,10 @@ type Mutation {
   updateMainCategory(mainCategoryId: String!, updateMainCategoryInput: UpdateMainCategoryInput!): MainCategory!
   deleteMainCategory(mainCategoryId: String!): Boolean!
   restoreMainCategory(mainCategoryId: String!): Boolean!
+  createModel(createModelInput: CreateModelInput!): Model!
+  updateModel(modelId: String!, updateModelInput: UpdateModelInput!): Model!
+  deleteModel(modelId: String!): Boolean!
+  restoreModel(modelId: String!): Boolean!
 }
 
 input CreateProductInput {
@@ -130,5 +136,13 @@ input CreateMainCategoryInput {
 }
 
 input UpdateMainCategoryInput {
+  name: String!
+}
+
+input CreateModelInput {
+  name: String!
+}
+
+input UpdateModelInput {
   name: String!
 }

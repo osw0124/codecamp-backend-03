@@ -1,5 +1,6 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { CreateModelInput } from './dto/createModel.input';
+import { UpdateModelInput } from './dto/updateModel.input';
 import { Model } from './entities/model.entity';
 import { ModelService } from './model.service';
 
@@ -27,24 +28,24 @@ export class ModelResolver {
 
   @Mutation(() => Model)
   async updateModel(
-    @Args('mainCategoryId') mainCategoryId: string, //
-    @Args('updateMainCategoryInput')
-    updateMainCategoryInput: UpdateMainCategoryInput,
+    @Args('modelId') modelId: string, //
+    @Args('updateModelInput')
+    updateModelInput: UpdateModelInput,
   ) {
-    await this.modelService.checkMainCategory({ mainCategoryId });
+    await this.modelService.checkModel({ modelId });
     return this.modelService.update({
-      mainCategoryId,
-      updateMainCategoryInput,
+      modelId,
+      updateModelInput,
     });
   }
 
   @Mutation(() => Boolean)
-  deleteMainCategory(@Args('mainCategoryId') mainCategoryId: string) {
-    return this.modelService.delete({ mainCategoryId });
+  deleteModel(@Args('modelId') modelId: string) {
+    return this.modelService.delete({ modelId });
   }
 
   @Mutation(() => Boolean)
-  restoreMainCategory(@Args('mainCategoryId') mainCategoryId: string) {
-    return this.modelService.restore({ mainCategoryId });
+  restoreModel(@Args('modelId') modelId: string) {
+    return this.modelService.restore({ modelId });
   }
 }
