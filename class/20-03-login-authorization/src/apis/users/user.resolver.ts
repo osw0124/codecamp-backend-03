@@ -4,7 +4,7 @@ import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth-guards';
-import { CurrentUser } from 'src/commons/auth/gql-user.parma';
+import { CurrentUser } from 'src/commons/auth/gql-user.param';
 
 @Resolver()
 export class UserResolver {
