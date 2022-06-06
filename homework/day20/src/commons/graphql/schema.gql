@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Brand {
+  id: String!
+  name: String!
+}
+
 type MainCategory {
   id: String!
   name: String!
@@ -12,9 +17,10 @@ type Model {
   name: String!
 }
 
-type Brand {
+type Color {
   id: String!
   name: String!
+  products: [Product!]!
 }
 
 type SubCategory {
@@ -38,10 +44,11 @@ type Product {
   colors: [Color!]!
 }
 
-type Color {
+type Order {
   id: String!
-  name: String!
-  products: [Product!]!
+  amount: Int!
+  price: Int!
+  product: Product!
 }
 
 type User {
@@ -57,13 +64,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Order {
-  id: String!
-  amount: Int!
-  price: Int!
-  product: Product!
-}
-
 type Query {
   fetchProduct(productId: String!): Product!
   fetchProducts: [Product!]!
@@ -75,6 +75,9 @@ type Query {
   fetchModels: [Model!]!
   fetchUser(userId: String!): User!
   fetchUsers: [User!]!
+  fetchBrand(brandId: String!): Brand!
+  fetchBrands: [Order!]!
+  fetchOrder(orderId: String!): Order!
 }
 
 type Mutation {
@@ -98,6 +101,10 @@ type Mutation {
   updateUser(userId: String!, updateUserInput: UpdateUserInput!): User!
   deleteUser(userId: String!): Boolean!
   restoreUser(userId: String!): Boolean!
+  createBrand(createBrandInput: CreateBrandInput!): Brand!
+  updateBrand(brandId: String!, updateBrandInput: UpdateBrandInput!): Brand!
+  deleteBrand(brandId: String!): Boolean!
+  restoreBrand(brandId: String!): Boolean!
 }
 
 input CreateProductInput {
@@ -167,4 +174,12 @@ input UpdateUserInput {
   birthDay: DateTime!
   phoneNumber: String!
   email: String!
+}
+
+input CreateBrandInput {
+  name: String!
+}
+
+input UpdateBrandInput {
+  name: String!
 }

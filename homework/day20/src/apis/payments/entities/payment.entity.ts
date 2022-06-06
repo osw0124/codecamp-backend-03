@@ -30,7 +30,8 @@ export class Payment {
   @Field(() => User)
   user: User;
 
-  @ManyToOne(() => Order)
+  @JoinColumn()
+  @OneToOne(() => Order)
   @Field(() => Order)
   order: Order;
 }
