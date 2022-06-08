@@ -26,12 +26,13 @@ export class AuthController {
     @Res() res: Response,
   ) {
     // 1. 기존 가입 확인
-    const user = await this.userService.findOne({ email: req.user.email });
+    let user = await this.userService.findOne({ email: req.user.email });
 
     // 2. 회원가입
     if (!user) {
-      const createUserInput = req.user;
-      await this.userService.create({ createUserInput });
+      user = await this.userService.create({
+        createUserInput: req.user,
+      });
     }
     // 3. 로그인
     this.authService.setRefreshToken({ user, res });
@@ -54,9 +55,8 @@ export class AuthController {
 
     // 2. 회원가입
     if (!user) {
-      const createUserInput = req.user;
       user = await this.userService.create({
-        createUserInput,
+        createUserInput: req.user,
       });
     }
 
@@ -81,9 +81,8 @@ export class AuthController {
 
     // 2. 회원가입
     if (!user) {
-      const createUserInput = req.user;
       user = await this.userService.create({
-        createUserInput,
+        createUserInput: req.user,
       });
     }
     // 3. 로그인
