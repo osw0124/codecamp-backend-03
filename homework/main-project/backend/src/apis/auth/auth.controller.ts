@@ -39,9 +39,6 @@ export class AuthController {
 
     // 4. 리다이렉트
     res.redirect('http://localhost:5500/frontend/login/index.html');
-    // res.redirect(
-    //   'http://localhost:5500/class21-03-login-google/frontend/social-login.html',
-    // );
   }
 
   @Get('/login/naver')
@@ -65,9 +62,6 @@ export class AuthController {
 
     // 4. 리다이렉트
     res.redirect('http://localhost:5500/frontend/login/index.html');
-    // res.redirect(
-    //   'http://localhost:5500/class21-03-login-google/frontend/social-login.html',
-    // );
   }
 
   @Get('/login/kakao')
@@ -90,8 +84,5 @@ export class AuthController {
 
     // 4. 리다이렉트
     res.redirect('http://localhost:5500/frontend/login/index.html');
-    // res.redirect(
-    //   'http://localhost:5500/class21-03-login-google/frontend/social-login.html',
-    // );
   }
 }
