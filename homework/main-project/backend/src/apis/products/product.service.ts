@@ -70,7 +70,6 @@ export class ProductService {
         }
       }
     }
-    console.log(inputColors);
 
     const result = await this.productRepository.save({
       ...product,
@@ -93,8 +92,6 @@ export class ProductService {
       },
     });
 
-    console.log(result);
-    console.log('===========================');
     // return await this.productRepository.save({ ...createProductInput });
     return result;
   }

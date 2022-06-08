@@ -109,6 +109,7 @@ type Mutation {
   deleteBrand(brandId: String!): Boolean!
   restoreBrand(brandId: String!): Boolean!
   login(email: String!, password: String!): String!
+  restoreAccessToken: String!
 }
 
 input CreateProductInput {

@@ -27,8 +27,6 @@ export class MainCategoryService {
       ...mainCategory,
     });
 
-    console.log(result);
-    console.log('===========================');
     // return await this.productRepository.save({ ...createProductInput });
     return result;
   }

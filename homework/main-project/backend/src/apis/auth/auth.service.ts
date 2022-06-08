@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import 'dotenv/config';
+
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -12,12 +15,21 @@ export class AuthService {
     private readonly UserRepository: Repository<User>,
   ) {}
 
-  getAccessToken({ hasUser }) {
-    this.UserRepository.update({ email: hasUser.email }, { isLogin: true });
+  getAccessToken({ user }) {
+    this.UserRepository.update({ email: user.email }, { isLogin: true });
 
     return this.jwtService.sign(
-      { email: hasUser.email, id: hasUser.id }, // 데이터
-      { secret: 'myAccessKey', expiresIn: '1h' }, // 생성 키, 유효기간
+      { email: user.email, id: user.id }, // 데이터
+      { secret: process.env.AccessKey, expiresIn: '30s' }, // 생성 키, 유효기간
     );
+  }
+
+  setRefreshToken({ user, res }) {
+    const refreshToken = this.jwtService.sign(
+      { email: user.email, id: user.id },
+      { secret: process.env.RefreshKey, expiresIn: '2w' },
+    );
+
+    res.setHeader('Set-Cookie', `refreshToken = ${refreshToken}; path=/;`);
   }
 }

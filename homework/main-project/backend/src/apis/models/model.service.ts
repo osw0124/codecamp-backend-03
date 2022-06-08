@@ -27,8 +27,6 @@ export class ModelService {
       ...model,
     });
 
-    console.log(result);
-    console.log('===========================');
     // return await this.productRepository.save({ ...createProductInput });
     return result;
   }

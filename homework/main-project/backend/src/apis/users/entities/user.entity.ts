@@ -11,13 +11,13 @@ import {
 export class User {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
-  id: string;
+  id?: string;
 
   @Column()
   @Field(() => String)
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Field(() => Date)
   birthDay: Date;
 
@@ -34,8 +34,8 @@ export class User {
   password: string;
 
   @Column({ default: false })
-  isLogin: boolean;
+  isLogin?: boolean;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt?: Date;
 }

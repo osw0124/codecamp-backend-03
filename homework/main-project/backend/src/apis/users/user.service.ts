@@ -26,25 +26,25 @@ export class UserService {
   }
 
   async create({ createUserInput }) {
-    const { ...user } = createUserInput;
+    const { name, birthDay, phoneNumber, email, password, ...other } =
+      createUserInput;
 
-    const hasUser = await this.userRepository.findOne({ name: user.name });
+    const hasUser = await this.userRepository.findOne({ email });
 
     if (hasUser) {
       return new ConflictException('이미 가입된 사용자입니다.');
     }
 
-    const hashedPassword = await bcrypt.hash(user.password, 7);
+    const hashedPassword = await bcrypt.hash(password, 7);
 
-    const result = await this.userRepository.save({
-      name: user.name,
-      birthDay: user.birthDay,
-      phoneNumber: user.phoneNumber,
-      email: user.email,
+    return await this.userRepository.save({
+      name,
+      birthDay,
+      phoneNumber,
+      email,
       password: hashedPassword,
+      ...other,
     });
-
-    return result;
   }
 
   async update({ userId, updateUserInput }) {
@@ -71,6 +71,7 @@ export class UserService {
     });
     return result.affected ? true : false;
   }
+
   async restore({ userId }) {
     const result = await this.userRepository.restore({
       id: userId,

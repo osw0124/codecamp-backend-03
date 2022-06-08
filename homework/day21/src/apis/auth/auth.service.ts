@@ -20,4 +20,6 @@ export class AuthService {
       { secret: 'myAccessKey', expiresIn: '1h' }, // 생성 키, 유효기간
     );
   }
+
+ 
 }

@@ -41,8 +41,6 @@ export class SubCategoryService {
       },
     });
 
-    console.log(result);
-    console.log('===========================');
     // return await this.productRepository.save({ ...createProductInput });
     return result;
   }
