@@ -20,7 +20,7 @@ export class AuthService {
 
     return this.jwtService.sign(
       { email: user.email, id: user.id }, // 데이터
-      { secret: process.env.AccessKey, expiresIn: '30s' }, // 생성 키, 유효기간
+      { secret: process.env.AccessKey, expiresIn: '1h' }, // 생성 키, 유효기간
     );
   }
 

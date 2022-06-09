@@ -7,6 +7,7 @@ import { BrandModule } from './apis/brands/brand.module';
 import { MainCategoryModule } from './apis/mainCategories/mainCategory.module';
 import { ModelModule } from './apis/models/model.module';
 import { OrderModule } from './apis/orders/order.module';
+import { PaymentModule } from './apis/payments/payment.module';
 import { ProductModule } from './apis/products/product.module';
 import { SubCategoryModule } from './apis/subCategories/subCategory.module';
 import { UserModule } from './apis/users/user.module';
@@ -20,6 +21,7 @@ import { UserModule } from './apis/users/user.module';
     BrandModule,
     OrderModule,
     AuthModule,
+    PaymentModule,
     ////////GraphQL
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

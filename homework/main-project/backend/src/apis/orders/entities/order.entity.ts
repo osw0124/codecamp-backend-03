@@ -19,7 +19,7 @@ export class Order {
   @Min(0)
   @Column({ default: 0 })
   @Field(() => Int, { defaultValue: 0 })
-  amount: number;
+  amount?: number;
 
   @Min(0)
   @Column({ default: 0 })
@@ -29,5 +29,5 @@ export class Order {
   @JoinColumn()
   @OneToOne(() => Product)
   @Field(() => Product)
-  product: Product;
+  product?: Product;
 }

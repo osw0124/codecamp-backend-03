@@ -5,9 +5,10 @@
 type User {
   id: String!
   name: String!
+  email: String!
   birthDay: DateTime!
   phoneNumber: String!
-  email: String!
+  point: Int!
 }
 
 """
@@ -64,6 +65,19 @@ type Order {
   product: Product!
 }
 
+type Payment {
+  id: String!
+  impUid: String!
+  status: POINT_TRANSACTION_STATUS_ENUM!
+  createdAt: DateTime!
+  user: User!
+}
+
+enum POINT_TRANSACTION_STATUS_ENUM {
+  PAYMENT
+  CANCEL
+}
+
 type Query {
   fetchProduct(productId: String!): Product!
   fetchProducts: [Product!]!
@@ -110,6 +124,7 @@ type Mutation {
   restoreBrand(brandId: String!): Boolean!
   login(email: String!, password: String!): String!
   restoreAccessToken: String!
+  createPayment(impUid: String!, amount: Float!): Payment!
 }
 
 input CreateProductInput {
