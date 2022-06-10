@@ -68,9 +68,13 @@ type Order {
 type Payment {
   id: String!
   impUid: String!
+  merchantUid: String!
+  amount: Int!
   status: POINT_TRANSACTION_STATUS_ENUM!
+  canceldAmount: Int!
   createdAt: DateTime!
   user: User!
+  order: Order!
 }
 
 enum POINT_TRANSACTION_STATUS_ENUM {
@@ -125,6 +129,7 @@ type Mutation {
   login(email: String!, password: String!): String!
   restoreAccessToken: String!
   createPayment(impUid: String!, amount: Float!): Payment!
+  cancelPayment(merchantUid: String!, cancelAmount: Float!, reason: String!): Payment!
 }
 
 input CreateProductInput {

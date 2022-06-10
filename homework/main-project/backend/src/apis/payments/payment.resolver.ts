@@ -17,10 +17,32 @@ export class PaymentResolver {
   @Mutation(() => Payment)
   createPayment(
     @Args('impUid') impUid: string, //
+    // @Args('merchantUid') merchantUid: string,
     @Args('amount') amount: number,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    console.log('들어옵~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    return this.paymentService.create({ impUid, amount, currentUser });
+    return this.paymentService.create({
+      impUid,
+      amount,
+      currentUser,
+    });
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => Payment)
+  cancelPayment(
+    // @Args('impUid') impUid: string, //
+    @Args('merchantUid') merchantUid: string, //
+    // @Args('amount') amount: number,
+    @Args('cancelAmount') cancelAmount: number,
+    @Args('reason') reason: string,
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    return this.paymentService.cancel({
+      merchantUid,
+      cancelAmount,
+      reason,
+      currentUser,
+    });
   }
 }

@@ -33,9 +33,21 @@ export class Payment {
   @Field(() => String)
   impUid: string;
 
+  @Column()
+  @Field(() => String)
+  merchantUid: string;
+
+  @Column({ nullable: false })
+  @Field(() => Int)
+  amount: number;
+
   @Column({ type: 'enum', enum: POINT_TRANSACTION_STATUS_ENUM })
   @Field(() => POINT_TRANSACTION_STATUS_ENUM)
   status: string;
+
+  @Column({ default: 0 })
+  @Field(() => Int)
+  canceldAmount: number;
 
   @CreateDateColumn()
   @Field(() => Date)
@@ -49,8 +61,8 @@ export class Payment {
   @Field(() => User)
   user: User;
 
-  // @JoinColumn()
-  // @OneToOne(() => Order)
-  // @Field(() => Order)
-  // order: Order;
+  @JoinColumn()
+  @OneToOne(() => Order)
+  @Field(() => Order)
+  order: Order;
 }

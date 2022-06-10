@@ -1,9 +1,11 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './apis/auth/auth.module';
 import { BrandModule } from './apis/brands/brand.module';
+import { IamportModule } from './apis/iamport/iamport.module';
 import { MainCategoryModule } from './apis/mainCategories/mainCategory.module';
 import { ModelModule } from './apis/models/model.module';
 import { OrderModule } from './apis/orders/order.module';
@@ -22,6 +24,7 @@ import { UserModule } from './apis/users/user.module';
     OrderModule,
     AuthModule,
     PaymentModule,
+    IamportModule,
     ////////GraphQL
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

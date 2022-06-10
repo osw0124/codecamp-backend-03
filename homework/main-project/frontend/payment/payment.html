@@ -39,17 +39,17 @@
                 "http://localhost:3000/graphql",
                 {
                   query: `
-                  mutation {
-                    createPayment(impUid: "${rsp.imp_uid}", amount: ${rsp.paid_amount}){
-                      id
+                    mutation {
+                      createPayment(impUid: "${rsp.imp_uid}", merchant_uid: "${rsp.merchant_uid}", amount: ${rsp.paid_amount}){
+                        id
+                      }
                     }
-                  }
-                `,
+                  `,
                 },
                 {
                   headers: {
                     Authorization:
-                      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlQHQuY2FvYWFtIiwiaWQiOiI1N2M4NTFjNS0yY2E0LTQ0NmYtODJlYS05ZmI4NTBjYjZlZTQiLCJpYXQiOjE2NTQ3ODA0OTEsImV4cCI6MTY1NDc4NDA5MX0.3YDCWtyU-6TFF45mmk6dSKpGb8_tlb_54VJLeqiDj44",
+                      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlQHQuY2FvYWFtIiwiaWQiOiI1N2M4NTFjNS0yY2E0LTQ0NmYtODJlYS05ZmI4NTBjYjZlZTQiLCJpYXQiOjE2NTQ4NDg3MjMsImV4cCI6MTY1NDg1MjMyM30.jPa7o97tE5q0hhsb-cgs6K9by2w466Dw3AEaMTOA4sc",
                   },
                 }
               );
@@ -63,10 +63,39 @@
           }
         );
       }
+
+      function canclePayment() {
+        const merchant_uid = getElementById("cancleMerchantId").value;
+
+        jQuery
+          .ajax({
+            url: "http://www.myservice.com/payments/cancel", // 예: http://www.myservice.com/payments/cancel
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              merchant_uid: merchant_uid, // 예: ORD20180131-0000011
+              cancel_request_amount: 100, // 환불금액
+              reason: "테스트 결제 환불", // 환불사유
+              // refund_holder: "오세웅", // [가상계좌 환불시 필수입력] 환불 수령계좌 예금주
+              // refund_bank: "88", // [가상계좌 환불시 필수입력] 환불 수령계좌 은행코드(예: KG이니시스의 경우 신한은행은 88번)
+              // refund_account: "56211105948400", // [가상계좌 환불시 필수입력] 환불 수령계좌 번호
+            }),
+            dataType: "json",
+          })
+          .done(function (result) {
+            alert("환불 성공");
+          })
+          .fail(function (error) {
+            alert("환불 실패");
+          });
+      }
     </script>
   </head>
   <body>
     결제할금액: <input type="text" id="qqq" />
     <button onclick="requestPay()">결제하기</button>
+    <br />
+    환불할 주문번호: <input type="text" id="cancleMerchantId" />
+    <button onclick="canclePayment()">환불하기</button>
   </body>
 </html>
