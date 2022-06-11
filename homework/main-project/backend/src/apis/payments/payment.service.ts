@@ -1,19 +1,20 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import 'dotenv/config';
-import axios from 'axios';
+
+import { IamportService } from '../iamport/iamport.service';
 
 import {
   Payment,
   POINT_TRANSACTION_STATUS_ENUM,
 } from './entities/payment.entity';
-import { IamportService } from '../iamport/iamport.service';
-
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -24,6 +25,7 @@ export class PaymentService {
     private readonly paymentRepository: Repository<Payment>, //
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly iamportService: IamportService,
   ) {}
 
   async create({ impUid, amount, currentUser }) {
@@ -31,30 +33,14 @@ export class PaymentService {
     //결제 검증 기능
 
     // 1. 아임 포트에서 엑세스 토큰 받아오기
-    const getToken = await axios({
-      url: 'https://api.iamport.kr/users/getToken',
-      method: 'post', // POST method
-      headers: { 'Content-Type': 'application/json' }, // "Content-Type": "application/json"
-      data: {
-        imp_key: process.env.IMP_API_KEY, // REST API키
-        imp_secret: process.env.IMP_API_SECRET, // REST API Secret
-      },
-    });
-
-    const impAccessToken = getToken.data.response;
+    const impAccessToken = (await this.iamportService.getToken()).data.response;
 
     if (!impAccessToken) throw new UnprocessableEntityException();
 
     // 2. 아임포트 엑세스 토큰을 이용해서 결제정보 조회
-    const getPaymentData = await axios({
-      url: `https://api.iamport.kr/payments/${impUid}`,
-      method: 'get',
-      headers: { Authorization: impAccessToken.access_token },
-    });
-
-    const paymentData = getPaymentData.data.response;
-
-    if (!paymentData) throw new UnprocessableEntityException();
+    const paymentData = await (
+      await this.iamportService.getPaymentData({ impUid, impAccessToken })
+    ).data.response;
 
     // 3. payment테이블에 같은 결제건이 있다면 ConflictException에러 반환
     const hasPaymentData = await this.paymentRepository.findOne({
@@ -77,12 +63,12 @@ export class PaymentService {
       user: currentUser,
     });
 
-    const result = await this.paymentRepository.save(payment); // save, create 차이 연습용
+    await this.paymentRepository.save(payment); // save, create 차이 연습용
 
     // 2. 유저의 돈 찾아오기
     const user = await this.userRepository.findOne({ id: currentUser.id });
 
-    // 3. 유저의 돈 업데이트
+    // 3. 유저의 포인트 업데이트
     await this.userRepository.update(
       { id: user.id }, //
       { point: user.point + amount },
@@ -93,75 +79,69 @@ export class PaymentService {
   }
 
   async cancel({ merchantUid, cancelAmount, reason, currentUser }) {
-    ///
-    const isCancled = await this.paymentRepository.findOne({ merchantUid });
+    // // 1. 결제 테이블에서 이미 취소되었다면 에러 반환
+    // const isCancled = await this.paymentRepository.findOne({ merchantUid });
 
-    // 1. 결제 테이블에서 이미 취소되었다면 에러 반환
-    if (isCancled.status === 'CANCEL') throw new UnprocessableEntityException();
+    // if (isCancled.status === 'CANCEL') throw new UnprocessableEntityException();
 
-    // 2. 엑세스 토큰 요청
-    const getToken = await axios({
-      url: 'https://api.iamport.kr/users/getToken',
-      method: 'post', // POST method
-      headers: { 'Content-Type': 'application/json' }, // "Content-Type": "application/json"
-      data: {
-        imp_key: process.env.IMP_API_KEY, // REST API키
-        imp_secret: process.env.IMP_API_SECRET, // REST API Secret
-      },
-    });
+    // 1. 엑세스 토큰 요청
+    const impAccessToken = (await this.iamportService.getToken()).data.response
+      .access_token;
 
-    const accessToken = getToken.data.response.access_token;
+    if (!impAccessToken) throw new UnprocessableEntityException();
 
-    if (!accessToken) throw new UnprocessableEntityException();
+    // 2. 사용자 포인트 조회
+    const user = await this.userRepository.findOne({ id: currentUser.id });
 
-    // 3. 결제 정보 조회
-    const payments = await this.paymentRepository.find({ merchantUid });
+    if (!user) throw new UnauthorizedException('로그인하고 사용해주세요!!!');
 
-    if (!payments) throw new UnprocessableEntityException();
+    // 3. 최소금액 확인
+    if (cancelAmount < 100) {
+      throw new BadRequestException('환불은 100원 이상부터 가능합니다.'); //정확한 금액과 정책 확인 필요
+    }
 
-    const { impUid, amount, canceldAmount } = payments[0];
-    const cancelableAmount = amount - cancelAmount;
+    // 4. 환불 가능 금액 계산
+    const cancelableAmount = user.point - cancelAmount;
 
     if (cancelableAmount <= 0) {
-      throw new ConflictException('이미 전액환불된 주문입니다!!!');
+      throw new UnprocessableEntityException(
+        '환불이 불가능 합니다. 이미 전액 환불 되었습니다!!!',
+      );
     }
 
-    try {
-      const getCancelData = await axios({
-        url: 'https://api.iamport.kr/payments/cancel',
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: accessToken, // 아임포트 서버로부터 발급받은 엑세스 토큰
-        },
-        data: {
-          reason, // 가맹점 클라이언트로부터 받은 환불사유
-          imp_uid: impUid, // imp_uid를 환불 `unique key`로 입력
-          amount: cancelAmount, // 가맹점 클라이언트로부터 받은 환불금액
-          checksum: cancelableAmount, // [권장] 환불 가능 금액 입력
-        },
-      });
+    // 5. merchntUid가 같은 결제 기록 조회
+    const payments = await this.paymentRepository.find({ merchantUid });
+    const { impUid, amount, canceledAmount } = payments[0];
 
-      const { response } = getCancelData.data; // 환불 결과
+    // 6. 아임포트에 환불신청
+    const cancelResult = await this.iamportService.paymentCancel({
+      impAccessToken,
+      impUid,
+      reason,
+      cancelAmount,
+      cancelableAmount,
+    });
 
-      console.log('================', response);
-    } catch (error) {
-      console.log(error);
-      throw new UnprocessableEntityException('환불 실패!!!');
-    }
+    console.log('환불결과:', cancelResult); //지금 당장 쓸일이 없고 빈 값만 들어오긴하는데 어디 쓸일이 있지 않을까?
 
+    // 7. DB에 화불 기록 저장
     const payment = this.paymentRepository.create({
       // DB에 값을 실제로 저장하지 않는다 객체만 생성한다.
       impUid,
       merchantUid,
-      amount: -amount,
+      amount: -cancelAmount,
       status: POINT_TRANSACTION_STATUS_ENUM.CANCEL,
       user: currentUser,
     });
 
+    // 8. 유저의 포인트 업데이트
+    await this.userRepository.update(
+      { id: user.id }, //
+      { point: user.point - cancelAmount },
+    );
+
     const result = await this.paymentRepository.save(payment);
 
     return result;
-    // this.paymentRepository.findOne({ merchantUid });
   }
 }

@@ -1,38 +1,67 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-// import { HttpService } from '@nestjs/axios';
-// import { AxiosResponse } from 'axios';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import 'dotenv/config';
 import axios from 'axios';
-
-import { Payment } from '../payments/entities/payment.entity';
-// import { Observable } from 'rxjs';
 
 @Injectable()
 export class IamportService {
-  //   constructor() // private readonly paymentRepository: Repository<Payment>, // private readonly httpService: HttpService, // @InjectRepository(Payment)
-  //   {}
-  //   getIamportToken({ imp_api_key, imp_secret }) {
-  //     const result = this.httpService.post(
-  //       'https://api.iamport.kr/users/getToken',
-  //       { imp_api_key, imp_secret },
-  //     );
-  //     console.log(result);
-  //     return result;
-  //   }
-  //   getToken({ imp_api_key, imp_secret }) {
-  //     const result = axios({
-  //       url: 'https://api.iamport.kr/users/getToken',
-  //       method: 'post', // POST method
-  //       headers: { 'Content-Type': 'application/json' }, // "Content-Type": "application/json"
-  //       data: {
-  //         imp_key: imp_api_key, // REST API키
-  //         imp_secret: imp_secret, // REST API Secret
-  //       },
-  //     });
-  //     console.log(result);
-  //   }
-}
+  async getToken() {
+    const token = await axios({
+      url: 'https://api.iamport.kr/users/getToken',
+      method: 'post', // POST method
+      headers: { 'Content-Type': 'application/json' },
+      data: {
+        imp_key: process.env.IMP_API_KEY,
+        imp_secret: process.env.IMP_API_SECRET,
+      },
+    });
 
-// https://stackoverflow.com/questions/52972616/add-headers-httprequest-in-nestjs
-// https://jakekwak.gitbook.io/nestjs/techniques/http-module
+    return token;
+  }
+
+  async getPaymentData({ impUid, impAccessToken }) {
+    try {
+      const paymentData = await axios({
+        url: `https://api.iamport.kr/payments/${impUid}`,
+        method: 'get',
+        headers: { Authorization: impAccessToken.access_token },
+      });
+
+      return paymentData;
+    } catch (error) {
+      console.log('결제 정보 조회 실패:', error.code);
+      throw new UnprocessableEntityException();
+    }
+  }
+
+  async paymentCancel({
+    impAccessToken,
+    impUid,
+    reason,
+    cancelAmount,
+    cancelableAmount,
+  }) {
+    try {
+      const getCancelData = await axios({
+        url: 'https://api.iamport.kr/payments/cancel',
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: impAccessToken, // 아임포트 서버로부터 발급받은 엑세스 토큰
+        },
+        data: {
+          reason, // 가맹점 클라이언트로부터 받은 환불사유
+          imp_uid: impUid, // imp_uid를 환불 `unique key`로 입력
+          amount: cancelAmount, // 가맹점 클라이언트로부터 받은 환불금액
+          checksum: cancelableAmount, // [권장] 환불 가능 금액 입력
+        },
+      });
+
+      const { response } = getCancelData.data; // 환불 결과
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw new UnprocessableEntityException('환불 실패!!!');
+    }
+  }
+}

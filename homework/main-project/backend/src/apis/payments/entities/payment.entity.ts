@@ -47,7 +47,7 @@ export class Payment {
 
   @Column({ default: 0 })
   @Field(() => Int)
-  canceldAmount: number;
+  canceledAmount: number;
 
   @CreateDateColumn()
   @Field(() => Date)

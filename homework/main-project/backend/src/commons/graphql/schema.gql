@@ -71,7 +71,7 @@ type Payment {
   merchantUid: String!
   amount: Int!
   status: POINT_TRANSACTION_STATUS_ENUM!
-  canceldAmount: Int!
+  canceledAmount: Int!
   createdAt: DateTime!
   user: User!
   order: Order!

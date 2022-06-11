@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 export interface ICurrentUser {
-  id?: string;
+  id: string;
   email: string;
   name?: string;
   password?: string;
