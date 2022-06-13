@@ -6,7 +6,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import 'dotenv/config';
 
 import { IamportService } from '../iamport/iamport.service';
@@ -26,9 +26,12 @@ export class PaymentService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly iamportService: IamportService,
+    private readonly connection: Connection,
   ) {}
 
   async create({ impUid, amount, currentUser }) {
+    const queryRunner = await this.connection.createQueryRunner();
+    await queryRunner.connect();
     ///////////////////////////////////////////////////////////
     //결제 검증 기능
 
@@ -52,33 +55,59 @@ export class PaymentService {
     //다른 검증이 필요하다면 추가
 
     ///////////////////////////////////////////////////////////
+    await queryRunner.startTransaction('SERIALIZABLE');
 
-    // 1. 테이블에 거래기록 작성
-    const payment = this.paymentRepository.create({
-      // DB에 값을 실제로 저장하지 않는다 객체만 생성한다.
-      impUid,
-      merchantUid: paymentData.merchant_uid,
-      amount,
-      status: POINT_TRANSACTION_STATUS_ENUM.PAYMENT,
-      user: currentUser,
-    });
+    try {
+      // 1. 테이블에 거래기록 작성
+      const payment = this.paymentRepository.create({
+        // DB에 값을 실제로 저장하지 않는다 객체만 생성한다.
+        impUid,
+        merchantUid: paymentData.merchant_uid,
+        amount,
+        status: POINT_TRANSACTION_STATUS_ENUM.PAYMENT,
+        user: currentUser,
+      });
 
-    await this.paymentRepository.save(payment); // save, create 차이 연습용
+      // await this.paymentRepository.save(payment); // save, create 차이 연습용
+      await queryRunner.manager.save(payment);
 
-    // 2. 유저의 돈 찾아오기
-    const user = await this.userRepository.findOne({ id: currentUser.id });
+      // 2. 유저의 돈 찾아오기
+      // const user = await this.userRepository.findOne({ id: currentUser.id });
+      const user = await queryRunner.manager.findOne(
+        User,
+        {
+          id: currentUser.id,
+        },
+        { lock: { mode: 'pessimistic_write' } },
+      );
 
-    // 3. 유저의 포인트 업데이트
-    await this.userRepository.update(
-      { id: user.id }, //
-      { point: user.point + amount },
-    );
+      // 3. 유저의 포인트 업데이트
+      // await this.userRepository.update(
+      //   { id: user.id }, //
+      //   { point: user.point + amount },
+      // );
 
-    // 4. 최종결과 프론트에 돌려주기
-    return payment;
+      await queryRunner.manager.update(
+        User,
+        { id: user.id },
+        { point: user.point + amount },
+      );
+
+      await queryRunner.commitTransaction();
+
+      // 4. 최종결과 프론트에 돌려주기
+      return payment;
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async cancel({ merchantUid, cancelAmount, reason, currentUser }) {
+    const queryRunner = await this.connection.createQueryRunner();
+    await queryRunner.connect();
     // // 1. 결제 테이블에서 이미 취소되었다면 에러 반환
     // const isCancled = await this.paymentRepository.findOne({ merchantUid });
 
@@ -124,24 +153,41 @@ export class PaymentService {
 
     console.log('환불결과:', cancelResult); //지금 당장 쓸일이 없고 빈 값만 들어오긴하는데 어디 쓸일이 있지 않을까?
 
-    // 7. DB에 화불 기록 저장
-    const payment = this.paymentRepository.create({
-      // DB에 값을 실제로 저장하지 않는다 객체만 생성한다.
-      impUid,
-      merchantUid,
-      amount: -cancelAmount,
-      status: POINT_TRANSACTION_STATUS_ENUM.CANCEL,
-      user: currentUser,
-    });
+    await queryRunner.startTransaction();
 
-    // 8. 유저의 포인트 업데이트
-    await this.userRepository.update(
-      { id: user.id }, //
-      { point: user.point - cancelAmount },
-    );
+    try {
+      // 7. DB에 화불 기록 저장
+      const payment = this.paymentRepository.create({
+        // DB에 값을 실제로 저장하지 않는다 객체만 생성한다.
+        impUid,
+        merchantUid,
+        amount: -cancelAmount,
+        status: POINT_TRANSACTION_STATUS_ENUM.CANCEL,
+        user: currentUser,
+      });
 
-    const result = await this.paymentRepository.save(payment);
+      // 8. 유저의 포인트 업데이트
+      // await this.userRepository.update(
+      //   { id: user.id }, //
+      //   { point: user.point - cancelAmount },
+      // );
+      await queryRunner.manager.update(
+        User,
+        { id: user.id },
+        { point: user.point - cancelAmount },
+      );
 
-    return result;
+      // const result = await this.paymentRepository.save(payment);
+      const result = await queryRunner.manager.save(payment);
+
+      await queryRunner.commitTransaction();
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
