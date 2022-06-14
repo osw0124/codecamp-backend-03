@@ -15,13 +15,13 @@ export class PaymentResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Payment)
-  createPayment(
+  async createPayment(
     @Args('impUid') impUid: string, //
     // @Args('merchantUid') merchantUid: string,
     @Args('amount') amount: number,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    return this.paymentService.create({
+    return await this.paymentService.create({
       impUid,
       amount,
       currentUser,
