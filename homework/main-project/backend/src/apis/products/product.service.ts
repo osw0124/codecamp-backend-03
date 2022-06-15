@@ -124,15 +124,33 @@ export class ProductService {
   async update({ productId, updateProductInput }) {
     const product = await this.productRepository.findOne(
       { id: productId },
-      { relations: ['imgUrl', 'colors'] },
+      { relations: ['colors', 'subCategory', 'brand', 'model'] },
     );
+
+    // const subCategory = await this.subCategoryRepository.findOne({id: })
     const newProduct = {
       id: productId,
       ...product,
       ...updateProductInput,
+      subCategory: {
+        id: product.subCategory.id,
+        name: product.subCategory.name,
+      },
+      brand: {
+        id: product.brand.id,
+        name: product.brand.name,
+      },
+      model: {
+        id: product.model.id,
+        name: product.model.name,
+      },
     };
+    // console.log('========================', newProduct);
 
-    return await this.productRepository.save(newProduct);
+    const result = await this.productRepository.save(newProduct);
+    console.log(result);
+
+    return result;
   }
 
   async checkSoldout({ productId }) {

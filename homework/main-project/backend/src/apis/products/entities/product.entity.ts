@@ -51,10 +51,9 @@ export class Product {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @JoinTable()
-  @ManyToMany(() => Image, (image) => image.product)
-  @Field(() => [Image])
-  imgUrl: Image[];
+  @Column('simple-array', { nullable: true })
+  @Field(() => [String], { nullable: true })
+  imgUrl: string[];
 
   @ManyToOne(() => SubCategory)
   @Field(() => SubCategory)
@@ -68,8 +67,13 @@ export class Product {
   @Field(() => Model)
   model: Model;
 
+  // @JoinTable()
+  // @ManyToMany(() => Color, (colors) => colors.products)
+  // @Field(() => [Color])
+  // colors: Color[];
+
   @JoinTable()
   @ManyToMany(() => Color, (colors) => colors.products)
-  @Field(() => [Color])
-  colors: Color[];
+  @Field(() => [String])
+  colors: string[];
 }
