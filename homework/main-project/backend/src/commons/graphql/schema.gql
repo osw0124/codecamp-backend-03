@@ -37,6 +37,12 @@ type Color {
   products: [Product!]!
 }
 
+type Image {
+  id: String!
+  url: String!
+  product: Product!
+}
+
 type SubCategory {
   id: String!
   name: String!
@@ -46,12 +52,12 @@ type SubCategory {
 type Product {
   id: String!
   desc: String!
-  imgUrl: String!
   price: Int!
   size: String!
   isDeliver: Boolean!
   star: Int!
   amount: Int!
+  imgUrl: [Image!]!
   subCategory: SubCategory!
   brand: Brand!
   model: Model!
@@ -130,11 +136,12 @@ type Mutation {
   restoreAccessToken: String!
   createPayment(impUid: String!, amount: Float!): Payment!
   cancelPayment(merchantUid: String!, cancelAmount: Float!, reason: String!): Payment!
+  uploadImage(files: [Upload!]!): [String!]!
 }
 
 input CreateProductInput {
   desc: String!
-  imgUrl: String!
+  imgUrl: [String!]!
   price: Int!
   size: String!
   isDeliver: Boolean!
@@ -148,7 +155,7 @@ input CreateProductInput {
 
 input UpdateProductInput {
   desc: String
-  imgUrl: String
+  imgUrl: [String!]
   price: Int
   size: String
   isDeliver: Boolean
@@ -208,3 +215,6 @@ input CreateBrandInput {
 input UpdateBrandInput {
   name: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload

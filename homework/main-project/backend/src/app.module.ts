@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './apis/auth/auth.module';
 import { BrandModule } from './apis/brands/brand.module';
 import { IamportModule } from './apis/iamport/iamport.module';
+import { ImageModule } from './apis/images/image.module';
 import { MainCategoryModule } from './apis/mainCategories/mainCategory.module';
 import { ModelModule } from './apis/models/model.module';
 import { OrderModule } from './apis/orders/order.module';
@@ -25,6 +26,7 @@ import { UserModule } from './apis/users/user.module';
     AuthModule,
     PaymentModule,
     IamportModule,
+    ImageModule,
     ////////GraphQL
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

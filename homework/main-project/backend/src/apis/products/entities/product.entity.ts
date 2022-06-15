@@ -2,15 +2,18 @@ import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
 import { Brand } from 'src/apis/brands/entities/brand.entity';
 import { Color } from 'src/apis/colors/entities/color.entity';
+import { Image } from 'src/apis/images/entities/image.entity';
 import { Model } from 'src/apis/models/entities/model.entity';
 import { SubCategory } from 'src/apis/subCategories/entities/subCategory.entity';
 import {
   Column,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -24,10 +27,6 @@ export class Product {
   @Column()
   @Field(() => String)
   desc: string;
-
-  @Column()
-  @Field(() => String)
-  imgUrl: string;
 
   @Column()
   @Field(() => Int)
@@ -51,6 +50,11 @@ export class Product {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @JoinTable()
+  @ManyToMany(() => Image, (image) => image.product)
+  @Field(() => [Image])
+  imgUrl: Image[];
 
   @ManyToOne(() => SubCategory)
   @Field(() => SubCategory)

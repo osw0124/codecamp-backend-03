@@ -6,7 +6,7 @@ export class CreateProductInput {
   @Field(() => String)
   desc: string;
 
-  @Field(() => String)
+  @Field(() => [String])
   imgUrl: string;
 
   @Min(0)

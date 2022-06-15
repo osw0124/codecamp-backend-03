@@ -22,6 +22,7 @@ export class ProductResolver {
   createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
   ) {
+    console.log(createProductInput);
     return this.productservice.create({ createProductInput });
   }
 
