@@ -31,18 +31,6 @@ type Model {
   name: String!
 }
 
-type Color {
-  id: String!
-  name: String!
-  products: [Product!]!
-}
-
-type Image {
-  id: String!
-  url: String!
-  product: Product!
-}
-
 type SubCategory {
   id: String!
   name: String!
@@ -57,11 +45,11 @@ type Product {
   isDeliver: Boolean!
   star: Int!
   amount: Int!
-  imgUrl: [Image!]!
+  imgUrl: [String!]
   subCategory: SubCategory!
   brand: Brand!
   model: Model!
-  colors: [Color!]!
+  colors: [String!]!
 }
 
 type Order {
