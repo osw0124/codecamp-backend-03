@@ -1,5 +1,6 @@
 import { Storage } from '@google-cloud/storage';
 import { Injectable } from '@nestjs/common';
+import 'dotenv/config';
 
 @Injectable()
 export class ImageService {
@@ -8,8 +9,8 @@ export class ImageService {
     console.log(waitedImages);
 
     const storage = new Storage({
-      projectId: 'codecamp-main-project',
-      keyFilename: 'codecamp-main-project-47de57a4f8db.json',
+      projectId: process.env.GCP_PROJECT_ID,
+      keyFilename: process.env.GCP_KEYFILE,
     }).bucket('codecamp-mainproject-bucket');
 
     const results = await Promise.all(
