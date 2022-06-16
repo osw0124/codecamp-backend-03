@@ -1,8 +1,10 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
-
+import { CacheModule, Module } from '@nestjs/common';
+import * as redisStore from 'cache-manager-redis-store';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RedisClientOptions } from 'redis';
+
 import { AuthModule } from './apis/auth/auth.module';
 import { BrandModule } from './apis/brands/brand.module';
 import { IamportModule } from './apis/iamport/iamport.module';
@@ -37,7 +39,7 @@ import { UserModule } from './apis/users/user.module';
     TypeOrmModule.forRoot({
       type: 'mysql',
       // host: 'my_database',
-      host: 'localhost',
+      host: 'my_database',
       port: 3306,
       username: 'root',
       password: '12341234',
@@ -45,6 +47,11 @@ import { UserModule } from './apis/users/user.module';
       entities: [__dirname + '/apis/**/*.entity.*'], //collection
       synchronize: true, //DB와 설정을 동기화 하겠다
       logging: true,
+    }),
+    CacheModule.register<RedisClientOptions>({
+      store: redisStore,
+      url: 'redis://my-redis:6379',
+      isGlobal: true,
     }),
   ],
 })
