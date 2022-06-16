@@ -1,5 +1,6 @@
 import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent } from 'typeorm';
 import { BigQuery } from '@google-cloud/bigquery';
+import 'dotenv/config';
 
 import { Product } from './product.entity';
 
@@ -17,8 +18,8 @@ export class ProductSubscriber implements EntitySubscriberInterface<Product> {
     console.log(event);
 
     const bigQuery = new BigQuery({
-      keyFilename: 'gcp-bigquery.json',
-      projectId: 'codecamp-main-project',
+      keyFilename: process.env.GCP_BIGQUERY_KEYFILE,
+      projectId: process.env.GCP_PROJECT_ID,
     });
 
     bigQuery
