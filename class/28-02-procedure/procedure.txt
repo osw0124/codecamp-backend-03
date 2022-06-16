@@ -1,0 +1,18 @@
+use myproject03;
+
+#프로시저 리스트 확인
+show procedure status;
+
+# 프로시저 삭제
+drop procedure mydummydata;
+
+#프로시저 생성
+create procedure mydummydata()
+begin
+	declare i int default 1;
+
+	while i <= 5000000 do
+		INSERT into board(writer, title, contents) values('cheolsu', rand(), 'isContents');
+		set i = i + 1;
+	end while;
+end;

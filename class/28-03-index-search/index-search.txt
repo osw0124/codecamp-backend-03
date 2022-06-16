@@ -1,0 +1,18 @@
+# 데이터 전체 개수 확인
+SELECT COUNT(*) from board;
+
+SELECT * from board WHERE title = '0.1352311308823816';
+
+SELECT * from board where from number = 145;
+
+
+# 옵티마이저 계획 확인
+explain SELECT * from board WHERE title = '0.1352311308823816';
+
+explain SELECT * from board where from number = 145;
+
+#인덱스 확인
+show index from board;
+
+#인데스 생성
+create index idx_title on board(title);

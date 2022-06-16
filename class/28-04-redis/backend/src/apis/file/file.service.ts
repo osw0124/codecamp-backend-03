@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
-import 'dotenv/config';
 
 @Injectable()
 export class FileService {
@@ -9,8 +8,8 @@ export class FileService {
     console.log(waitedFiles);
 
     const storage = new Storage({
-      projectId: process.env.GCP_PROJECT_ID,
-      keyFilename: process.env.GCP_KEYFILE,
+      projectId: 'codecamp-main-project',
+      keyFilename: 'codecamp-main-project-47de57a4f8db.json',
     }).bucket('codecamp-mainproject-bucket');
 
     // 구글 스토리지에 파일 업로드하기
