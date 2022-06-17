@@ -35,6 +35,31 @@ export class AuthResolver {
     return this.authService.getAccessToken({ user: hasUser });
   }
 
+  @Mutation(() => String)
+  logout(
+    @Context() context: any, //
+  ) {
+    const accessToken = context.req.headers.authorization.split(' ')[1];
+    const refreshToken = context.req.headers.cookie.split('=')[1];
+
+    //토큰 검증
+    const isValidation = this.authService.validationToken({
+      accessToken,
+      refreshToken,
+    });
+
+    // console.log('isValidation', isValidation);
+    if (isValidation) {
+      const isSave = this.authService.saveToken({ accessToken, refreshToken });
+
+      if (isSave) {
+        return '로그아웃에 성공했습니다.';
+      }
+    }
+
+    return '로그아웃 실패!!';
+  }
+
   @UseGuards(GqlAuthRefreshGuard)
   @Mutation(() => String)
   restoreAccessToken(

@@ -1,8 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  ConflictException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as jwt from 'jsonwebtoken';
 
+import { Cache } from 'cache-manager';
 import 'dotenv/config';
 
 import { User } from '../users/entities/user.entity';
@@ -13,6 +21,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(User)
     private readonly UserRepository: Repository<User>,
+
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   getAccessToken({ user }) {
@@ -31,5 +42,40 @@ export class AuthService {
     );
 
     res.setHeader('Set-Cookie', `refreshToken = ${refreshToken}; path=/;`);
+  }
+
+  validationToken({ accessToken, refreshToken }) {
+    try {
+      jwt.verify(accessToken, process.env.AccessKey);
+      jwt.verify(refreshToken, process.env.RefreshKey);
+
+      // console.log('=====', verifyAccess, verifyRefresh);
+      return true;
+    } catch (error) {
+      throw new UnauthorizedException('유효하지 않은 엑세스 토큰입니다', error);
+    }
+  }
+
+  async saveToken({ accessToken, refreshToken }) {
+    const verifyAccess = jwt.verify(accessToken, process.env.AccessKey);
+    const verifyRefresh = jwt.verify(refreshToken, process.env.RefreshKey);
+    console.log('=======', verifyAccess, verifyRefresh);
+    try {
+      // 토큰 저장
+      await this.cacheManager.set(`accessToken:${accessToken}`, 'accessToken', {
+        ttl: 120,
+      });
+      await this.cacheManager.set(
+        `refreshToken:${refreshToken}`,
+        'refreshToken',
+        {
+          ttl: 120,
+        },
+      );
+
+      return true;
+    } catch (error) {
+      throw new ConflictException('토큰을 저장하지 못했습니다!!', error);
+    }
   }
 }
