@@ -57,25 +57,15 @@ export class ProductService {
       },
     });
 
-    // console.log('Elas===', hasElastic.hits.hits);
     const idArr = hasElastic.hits.hits.map((v) => v._source['id']);
-    // console.log(ids);
     const result = await this.productRepository.findByIds(idArr, {
       relations: ['subCategory', 'brand', 'model', 'colors'],
     });
-    console.log(result);
 
     // 4. 조회한  결과를 Redis에 저장
     for (let i = 0; i < result.length; i++) {
       await this.cachemanager.set(`${result[i].id}`, result[i], { ttl: 600 });
     }
-    // result.map(async (v) => {
-    //   return await this.cachemanager.set(`${v.id}`, v), { ttl: 600 };
-    // });
-
-    // await this.cachemanager.set(`${hasElastic._scroll_id}`, hasElastic, {
-    //   ttl: 0,
-    // });
 
     //5. 조회한 결과를 클라이언트에게 반환
     return result;
