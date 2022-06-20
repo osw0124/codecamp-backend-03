@@ -1,12 +1,16 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+
 import { CreateProductInput } from './dto/createProduct.input';
 import { UpdateProductInput } from './dto/updateProduct.input';
-import { Product } from './entities/product.entity';
 import { ProductService } from './product.service';
+
+import { Product } from './entities/product.entity';
 
 @Resolver()
 export class ProductResolver {
-  constructor(private readonly productservice: ProductService) {}
+  constructor(
+    private readonly productservice: ProductService, //
+  ) {}
 
   @Query(() => Product)
   fetchProduct(@Args('productId') productId: string) {
@@ -14,15 +18,16 @@ export class ProductResolver {
   }
 
   @Query(() => [Product])
-  fetchProducts() {
-    return this.productservice.findAll();
+  fetchProducts(@Args('search') search: string) {
+    console.log('테스트중');
+    return this.productservice.findAll({ search });
   }
 
   @Mutation(() => Product)
   createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
   ) {
-    console.log(createProductInput);
+    // console.log(createProductInput);
     return this.productservice.create({ createProductInput });
   }
 

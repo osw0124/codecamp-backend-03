@@ -31,3 +31,16 @@ services:
     image: redis:latest
     ports:
       - 6379:6379
+
+  elasticsearch: # ELK 기본설정에 elasticsearch로 연결되어 있는 곳이 많기 때문에 이름을 바꾸지 않는 것이 좋다.
+    image: elasticsearch:7.17.0 #ELK는 같은 버전으로 통일하는 것이 좋다
+    environment:
+      discovery.type: single-node
+    ports:
+      - 9200:9200
+
+  logstash:
+    image: logstash:7.17.0
+    volumes:
+      - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar

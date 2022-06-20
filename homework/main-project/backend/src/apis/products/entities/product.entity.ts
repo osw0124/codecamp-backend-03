@@ -15,6 +15,7 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -47,6 +48,9 @@ export class Product {
   @Column({ default: 0 })
   @Field(() => Int, { defaultValue: 0 })
   amount: number;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @DeleteDateColumn()
   deletedAt: Date;

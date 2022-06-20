@@ -10,6 +10,7 @@ import { Image } from '../images/entities/image.entity';
 import { Model } from '../models/entities/model.entity';
 import { SubCategory } from '../subCategories/entities/subCategory.entity';
 import { Product } from './entities/product.entity';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { Product } from './entities/product.entity';
       Color,
       Image,
     ]),
+    ElasticsearchModule.register({ node: 'http://elasticsearch:9200' }),
   ],
   providers: [ProductResolver, ProductService],
 })

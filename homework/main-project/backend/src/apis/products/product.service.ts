@@ -1,6 +1,10 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CACHE_MANAGER, Inject } from '@nestjs/common';
+import { Cache } from 'cache-manager';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
+
 import { Brand } from '../brands/entities/brand.entity';
 import { Color } from '../colors/entities/color.entity';
 import { Image } from '../images/entities/image.entity';
@@ -12,6 +16,9 @@ import { Product } from './entities/product.entity';
 @Injectable()
 export class ProductService {
   constructor(
+    @Inject(CACHE_MANAGER)
+    private readonly cachemanager: Cache,
+    private readonly elasticsearchService: ElasticsearchService,
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     @InjectRepository(SubCategory)
@@ -33,10 +40,50 @@ export class ProductService {
     });
   }
 
-  async findAll() {
-    return await this.productRepository.find({
+  async findAll({ search }) {
+    // 1. Redis에 해당 검색어에 대한 검색결과가 캐시되어 있는지 확인합니다.
+    const hasToken = await this.cachemanager.get(search);
+
+    // 2. 있으면 캐시되어있는 결과를 클라이언트에 반환합니다.
+    if (hasToken) {
+      return hasToken;
+    }
+
+    // 3. 없다면 Elasticsearch에서 해당 검색어를 검색합니다.
+    const hasElastic = await this.elasticsearchService.search({
+      index: 'day17',
+      query: {
+        match_all: { _name: search },
+      },
+    });
+
+    // console.log('Elas===', hasElastic.hits.hits);
+    const idArr = hasElastic.hits.hits.map((v) => v._source['id']);
+    // console.log(ids);
+    const result = await this.productRepository.findByIds(idArr, {
       relations: ['subCategory', 'brand', 'model', 'colors'],
     });
+    console.log(result);
+
+    // 4. 조회한  결과를 Redis에 저장
+    for (let i = 0; i < result.length; i++) {
+      await this.cachemanager.set(`${result[i].id}`, result[i], { ttl: 600 });
+    }
+    // result.map(async (v) => {
+    //   return await this.cachemanager.set(`${v.id}`, v), { ttl: 600 };
+    // });
+
+    // await this.cachemanager.set(`${hasElastic._scroll_id}`, hasElastic, {
+    //   ttl: 0,
+    // });
+
+    //5. 조회한 결과를 클라이언트에게 반환
+    return result;
+
+    // DB 조회 주석 처리
+    // return await this.productRepository.find({
+    //   relations: ['subCategory', 'brand', 'model', 'colors'],
+    // });
   }
 
   async create({ createProductInput }) {
