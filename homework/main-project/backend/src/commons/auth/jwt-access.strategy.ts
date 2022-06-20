@@ -1,7 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import 'dotenv/config';
-import { CACHE_MANAGER, Inject } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, UnauthorizedException } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 
 export class JwtAccessStrategy extends PassportStrategy(
@@ -18,13 +18,14 @@ export class JwtAccessStrategy extends PassportStrategy(
       passReqToCallback: true,
     });
   }
-  async validate(req, payload) {
-    // console.log('=================', req.headers);
-    console.log('=================', req.headers.authorization);
-    console.log('=================', req.headers.cookie);
+  async validate({ req, payload }) {
+    const accessToken = req.headers.authorization.split(' ')[1];
 
-    // const mycache = await this.cacheManager.get();
-    // console.log(mycache);
+    const hasToken = await this.cacheManager.get(`accessToken:${accessToken}`);
+
+    if (hasToken) {
+      throw new UnauthorizedException('로그인 해주세요');
+    }
     return {
       email: payload.email,
       id: payload.id,

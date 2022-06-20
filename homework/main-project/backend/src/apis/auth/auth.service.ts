@@ -15,6 +15,13 @@ import 'dotenv/config';
 
 import { User } from '../users/entities/user.entity';
 
+// interface IlogoutToken {
+//   email: string;
+//   id: string;
+//   iat: number;
+//   exp: number;
+// }
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -57,23 +64,28 @@ export class AuthService {
   }
 
   async saveToken({ accessToken, refreshToken }) {
-    const verifyAccess = jwt.verify(accessToken, process.env.AccessKey);
-    const verifyRefresh = jwt.verify(refreshToken, process.env.RefreshKey);
-    console.log('=======', verifyAccess, verifyRefresh);
+    const verifyAccess: any = jwt.verify(accessToken, process.env.AccessKey);
+    const verifyRefresh: any = jwt.verify(refreshToken, process.env.RefreshKey);
+
     try {
       // 토큰 저장
-      await this.cacheManager.set(`accessToken:${accessToken}`, 'accessToken', {
-        ttl: 120,
-      });
-      await this.cacheManager.set(
-        `refreshToken:${refreshToken}`,
-        'refreshToken',
+      const saveAccess = await this.cacheManager.set(
+        `accessToken:${accessToken}`,
+        'accessToken',
         {
-          ttl: 120,
+          ttl: verifyAccess.exp - verifyAccess.iat,
         },
       );
 
-      return true;
+      const saveRefresh = await this.cacheManager.set(
+        `refreshToken:${refreshToken}`,
+        'refreshToken',
+        {
+          ttl: verifyRefresh.exp - verifyRefresh.iat,
+        },
+      );
+
+      if (saveAccess === 'OK' && saveRefresh === 'OK') return true;
     } catch (error) {
       throw new ConflictException('토큰을 저장하지 못했습니다!!', error);
     }
