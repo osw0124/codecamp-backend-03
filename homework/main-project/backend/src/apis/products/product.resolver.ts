@@ -19,7 +19,6 @@ export class ProductResolver {
 
   @Query(() => [Product])
   fetchProducts(@Args('search') search: string) {
-    console.log('테스트중');
     return this.productservice.findAll({ search });
   }
 
@@ -27,7 +26,6 @@ export class ProductResolver {
   createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
   ) {
-    // console.log(createProductInput);
     return this.productservice.create({ createProductInput });
   }
 
