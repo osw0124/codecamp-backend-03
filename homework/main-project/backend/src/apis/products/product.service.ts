@@ -53,7 +53,7 @@ export class ProductService {
     const hasElastic = await this.elasticsearchService.search({
       index: 'day17',
       query: {
-        match_all: { _name: search },
+        match: { _name: search },
       },
     });
 
