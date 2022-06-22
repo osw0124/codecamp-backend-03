@@ -6,7 +6,7 @@ import 'dotenv/config';
 export class FileService {
   async upload({ files }) {
     const waitedFiles = await Promise.all(files);
-    console.log(waitedFiles);
+    // console.log(waitedFiles);
 
     const storage = new Storage({
       projectId: process.env.GCP_PROJECT_ID,
