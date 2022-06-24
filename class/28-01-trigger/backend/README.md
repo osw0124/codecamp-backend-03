@@ -73,6 +73,7 @@ export class ProductSubscriber implements EntitySubscriberInterface<Product> {
       projectId: '',
     });
 
+    //Big Query에 대이터를 Insert
     bigQuery //데이터 셋과 테이블 이름은 GCP에서 생성한 이름과 같아야한다.
       .dataset(process.env.GCP_BIGQUERY_DATASET)
       .table(process.env.GCP_BIGQUERY_TABLE)
