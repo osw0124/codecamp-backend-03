@@ -1,8 +1,9 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import 'dotenv/config';
+
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardModule } from './apis/boards/boards.module';
 import { FileModule } from './apis/file/file.module';
@@ -33,8 +34,8 @@ import { UserModule } from './apis/users/user.module';
       type: 'mysql',
       host: '34.64.140.105',
       port: 3306,
-      username: 'root',
-      password: 'root',
+      username: process.env.GCP_MYSQL_USER,
+      password: process.env.GCP_MYSQL_PASS,
       database: 'myserver03',
       entities: [__dirname + '/apis/**/*.entity.*'], //collection
       synchronize: true, //DB와 설정을 동기화 하겠다
