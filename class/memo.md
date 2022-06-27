@@ -14,5 +14,6 @@
 3. 연결 설정 => 연결 허용 IP 등록 => 외부 접속 가능
 4. docker compose 수정
 5. appmodule typeOrmModule 연결 설정 수정
-6. 보안을 위해서 VPC(Virtual Private Cloud) Peering 설정
+6. 보안을 위해서 VPC(Virtual Private Cloud) Peering 설정 => VPC 피어링??
     - 연결 설정 수정 (비공개 IP로 변경)
+    - 연습 때는 default VPC에 들어가지만 일반적으로 다른VPC에 들어간다 ???
