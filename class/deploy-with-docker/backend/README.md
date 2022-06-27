@@ -87,3 +87,50 @@ docker-compose -f <실행한 docker compose 파일이름> logs -f --tail=100 <do
 - git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.dev' -f
 - git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.stage' -f
 - git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.prod' -f
+
+# **Serverless service**
+
+- 백엔드 서버없이 서비스하는 것 => Clooud Function과 같은 도구를 사용해서 기능을 클라우드 내에 생성한다
+- 접속량이 많지않은 경우에 비용을 줄일 수 있는 수단
+
+#### **한계**
+
+- 첫 실행 때 vm인스턴스 생성에 시간이 걸린다(한번 생성되면 5~10초 정도 다음 요청을 기다린다) => **Cold Start**
+
+# **GCP SQL 설정**
+
+1. 설치
+2. 데이터베이스 생성
+3. 연결 설정 => 연결 허용 IP 등록 => 외부 접속 가능
+4. docker compose 수정
+5. appmodule typeOrmModule 연결 설정 수정
+6. 보안을 위해서 VPC(Virtual Private Cloud) Peering 설정 => VPC 피어링??
+   - 연결 설정 수정 (비공개 IP로 변경)
+   - 연습 때는 default VPC에 들어가지만 일반적으로 다른VPC에 들어간다 ???
+
+# **Cloud DNS**
+
+1. DNS 영역 만들기 (발급받은 도매인 사용)
+2. 구매 사이트 내임서버 주소 수정 (가비아 => GCP) (시간이 좀 걸림 가비아의 경우 일괄처리 되는 듯)
+3. 레코드 세트 추가
+
+# **인스턴스 그룹**
+
+1. 비관리형 인스턴스 그룹 만들기
+
+# **로드밸런서(부하분산)**
+
+1. 부하 분산기 만들기
+
+   - 프론트(Input)/백엔드(Output) 구성
+   - Content Delivery Network
+   - 헬스체커
+
+     - 로드 밸런싱의 대상이 되는 백엔드 자원의 상태를 주기적으로 확인하는 도구
+     - 기능이 없을 때는 TCP 프로토콜로 체크하는 것이 기본 (아래는 curl을 이용한 상태코드 확인)
+
+       ```
+       curl http://aaa.codecamp-deploy.com:3000/graphql -w "%{http_code}"
+       ```
+
+     - DNS 레코드 주소 로드밸런서 주소로 변경
