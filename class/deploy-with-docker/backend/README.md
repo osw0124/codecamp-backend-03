@@ -84,6 +84,6 @@ docker-compose -f <실행한 docker compose 파일이름> logs -f --tail=100 <do
 
 # **git log를 돌면서 잘못 올린 파일 지우기**
 
-> git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.dev' -f
-> git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.stage' -f
-> git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.prod' -f
+- git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.dev' -f
+- git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.stage' -f
+- git filter-branch --tree-filter 'rm -f ./class/deploy-with-docker/backend/.env.prod' -f
