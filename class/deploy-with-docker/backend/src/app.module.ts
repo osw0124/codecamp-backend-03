@@ -31,11 +31,11 @@ import { UserModule } from './apis/users/user.module';
     ///////MySQL
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'my-database',
+      host: '34.64.140.105',
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'mydocker03',
+      database: 'myserver03',
       entities: [__dirname + '/apis/**/*.entity.*'], //collection
       synchronize: true, //DB와 설정을 동기화 하겠다
       logging: true,

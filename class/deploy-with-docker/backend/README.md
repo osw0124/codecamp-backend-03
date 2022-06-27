@@ -53,7 +53,7 @@ docker-compose -f <docker compose 파일이름> up -d
 docker-compose -f <실행한 docker compose 파일이름> logs
 docker-compose -f <실행한 docker compose 파일이름> logs -f
 docker-compose -f <실행한 docker compose 파일이름> logs -f --tail=100
-docker-compose -f <실행한 docker compose 파일이름> logs -f --tail=100 <docker>>
+docker-compose -f <실행한 docker compose 파일이름> logs -f --tail=100 <docker>
 ```
 
 # Cloud Serive
