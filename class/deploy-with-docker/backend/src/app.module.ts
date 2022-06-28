@@ -32,7 +32,7 @@ import { UserModule } from './apis/users/user.module';
     ///////MySQL
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.GCP_MYSQL_ADDR,
+      host: process.env.GCP_KUBE_MYSQL_HOST,
       port: 3306,
       username: process.env.GCP_MYSQL_USER,
       password: process.env.GCP_MYSQL_PASS,
