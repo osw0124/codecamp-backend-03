@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   my-backend:
-    image: asia.gcr.io/codecamp-main-project/my-backend03:1
+    image: asia.gcr.io/codecamp-main-project/my-backend03:3
     build:
       context: .
       dockerfile: Dockerfile
