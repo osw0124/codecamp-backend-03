@@ -12,6 +12,7 @@ import { PointTransactionModule } from './apis/pointTransaction/pointTransaction
 import { ProductModule } from './apis/products/product.module';
 import { ProductCategoryModule } from './apis/productsCategory/productCategory.module';
 import { UserModule } from './apis/users/user.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { UserModule } from './apis/users/user.module';
     ///////MySQL
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.GCP_KUBE_MYSQL_HOST,
+      host: process.env.GCP_MYSQL_ADDR,
       port: 3306,
       username: process.env.GCP_MYSQL_USER,
       password: process.env.GCP_MYSQL_PASS,
@@ -42,5 +43,6 @@ import { UserModule } from './apis/users/user.module';
       logging: true,
     }),
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
