@@ -8,4 +8,6 @@ RUN yarn install
 
 COPY . /myfolder
 #CMD로 실행하기 중요!
-CMD yarn start:dev
+# CMD yarn start:dev
+RUN yarn build
+CMD yarn start:prod
