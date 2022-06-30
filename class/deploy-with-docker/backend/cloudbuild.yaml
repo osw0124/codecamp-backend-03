@@ -1,27 +1,27 @@
 # gcp 쿠버 docs 확인
 
 steps:
-    # 1단계 => docker-compose -f docker-compose.prod.yaml build
-    - name: docker/compose:1.29.0
-      args:
-          - -f
-          - class/deploy-with-docker/backend/docker-compose.prod.yaml
-          - build
+  # 1단계 => docker-compose -f docker-compose.prod.yaml build
+  - name: docker/compose:1.29.0
+    args:
+      - -f
+      - class/deploy-with-docker/backend/docker-compose.prod.yaml
+      - build
 
-    # 2단계 => docker-compose -f docker-compose.prod.yaml push
-    - name: docker/compose:1.29.0
-      args:
-          - -f
-          - class/deploy-with-docker/backend/docker-compose.prod.yaml
-          - push
+  # 2단계 => docker-compose -f docker-compose.prod.yaml push
+  - name: docker/compose:1.29.0
+    args:
+      - -f
+      - class/deploy-with-docker/backend/docker-compose.prod.yaml
+      - push
 
-    # 3단계 => kubectl set image deployment/mybackend my-backend03-sha256-1=asia.gcr.io/codecamp-main-project/my-backend03:8
-    - name: gcr.io/cloud-builders
-      args:
-          - set
-          - image
-          - deployment/mybackend
-          - my-backend03-sha256-1=asia.gcr.io/codecamp-main-project/my-backend03:9
-      env:
-          - CLOUDSDK_COMPUTE_ZONE=asia-northeast3
-          - CLOUDSDK_CONTAINER_CLUSTER=autopilot-cluster-1
+  # 3단계 => kubectl set image deployment/mybackend my-backend03-sha256-1=asia.gcr.io/codecamp-main-project/my-backend03:8
+  - name: gcr.io/cloud-builders/kubectl
+    args:
+      - set
+      - image
+      - deployment/mybackend
+      - my-backend03-sha256-1=asia.gcr.io/codecamp-main-project/my-backend03:9
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=asia-northeast3
+      - CLOUDSDK_CONTAINER_CLUSTER=autopilot-cluster-1
